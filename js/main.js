@@ -1,37 +1,41 @@
 //game constants
 const columns = 24; //number of columns/ rows
-const level = 4; 
+const fieldSize = Math.floor(board.offsetWidth/columns);
+board.style.width = fieldSize * columns + "px";
+board.style.height = fieldSize * columns + "px";
+const level = 10; // the higher the faster does the player move: level-times per second
 const interval = 1000/level; //refresh interval for movement
-console.log("interval: " + interval)
+
 
 class Game {
     constructor(){
         this.player = null;
         this.fruit = null;
+        this.points = 0;
         this.moveDirection = null;
 
-        
         this.canTurn = false;     
         /* ^ a variable that will prevent that you can change direction 
         more than once per interval, otherwise you could do a U-turn (180°)
         if you hit the keys faster than the interval : */ 
+      
+        this.lastMove = null;
+
 
     }
     
     start(){
-        console.log("starting game...");
         this.player = new Player();
+        this.fruit = new Fruit();
         this.moveDirection = "right";
-        
-        
-        this.attachEventListeners();
 
+
+        this.attachEventListeners();
 
         //move player
         setInterval(() => {
-            this.canTurn = true; 
-
-
+            this.canTurn = true;
+            this.detectFruitCollision(this.fruit);
                 switch(this.moveDirection){
                     case "up": this.player.moveUp();
                         break;
@@ -42,41 +46,44 @@ class Game {
                     case "left": this.player.moveLeft();
                         break;
                 }
-
-
-            
-
-
         }, interval);
+
         
     }
 
     attachEventListeners(){
         document.addEventListener("keydown", (event) => {
             if (this.canTurn){
-                if (this.moveDirection !== "down" && event.key === "ArrowUp"){
+                if ((this.moveDirection === "right" || this.moveDirection === "left") && event.key === "ArrowUp"){
                     this.moveDirection = "up";
-                    this.canTurn = false;
                 }
-                if (this.moveDirection !== "left" && event.key === "ArrowRight"){
+                if ((this.moveDirection === "up" || this.moveDirection === "down") && event.key === "ArrowRight"){
                     this.moveDirection = "right";
-                    this.canTurn = false;
                 }
-                if (this.moveDirection !== "up" && event.key === "ArrowDown"){
+                if ((this.moveDirection === "left" || this.moveDirection === "right") && event.key === "ArrowDown"){
                     this.moveDirection = "down";
-                    this.canTurn = false;
                 }
-                if (this.moveDirection !== "right" && event.key === "ArrowLeft"){
+                if ((this.moveDirection === "up" || this.moveDirection === "down") && event.key === "ArrowLeft"){
                     this.moveDirection = "left";
-                    this.canTurn = false;
                 }
+                this.canTurn = false;
+
             }
-
-            
-            
-
-
+            else {
+                console.log("grr");
+            }
         });
+    }
+
+    detectFruitCollision(fruit){
+        if (this.player.positionX === fruit.positionX && 
+            this.player.positionY === fruit.positionY) {    
+            this.points += 100;
+            this.fruit.removeInstance();
+            this.fruit = new Fruit();
+            console.log(this.points);
+        }
+
     }
 
 
@@ -84,18 +91,16 @@ class Game {
 
 class Player {
     constructor(){
-        this.width = board.offsetWidth/columns;
-        this.height = this.width;
-        this.positionX = board.offsetHeight/2;
-        this.positionY =  board.offsetHeight/2;
+        this.width = fieldSize;
+        this.height = fieldSize;
+        this.positionX = board.offsetWidth/2;
+        this.positionY =  board.offsetWidth/2;
         this.domElement = null;
-        // console.log(board);
 
         this.createDomElement();
     }
 
     createDomElement(){
-        console.log("creating Player...");
         this.domElement = document.createElement('div');
 
         this.domElement.id = "player";
@@ -112,52 +117,53 @@ class Player {
 
 
     moveUp(){
-        if (this.positionY < board.offsetHeight - this.height) {
-            this.positionY += this.height;
+        if (this.positionY < board.offsetHeight - fieldSize) {
+            this.positionY += fieldSize;
             this.domElement.style.bottom = this.positionY + "px";
         } else {
             this.positionY = 0;
             this.domElement.style.bottom = this.positionY + "px";
         }
-        this.moveDirection = "up";
+        this.canTurn = true;
+
     }
 
     moveDown(){
-        if (this.positionY > 0 + this.width) {
-            this.positionY -= this.height;
+        if (this.positionY > 0) {
+            this.positionY -= fieldSize;
             this.domElement.style.bottom = this.positionY + "px";
-            console.log(this.positionY);
+
         } else {
-            this.positionY = board.offsetHeight - this.height;
+            this.positionY = board.offsetHeight - fieldSize;
             this.domElement.style.bottom = this.positionY + "px";
         }
-        this.moveDirection = "down";
+        this.canTurn = true;
+
     }
 
     moveRight(){
-        if (this.positionX < board.offsetWidth - this.width) {
-            this.positionX += this.width;
+        if (this.positionX < board.offsetWidth - fieldSize) {
+            this.positionX += fieldSize;
             this.domElement.style.left = this.positionX + "px";
-            console.log(board.offsetWidth);
-            console.log(this.positionX);
         } else {
             this.positionX = 0;
             this.domElement.style.left = this.positionX + "px";
         }
-        this.moveDirection = "right";
+        this.canTurn = true;
+
         
     }
 
     moveLeft(){
-        if (this.positionX > 0 + this.width) {
+        if (this.positionX > 0) {
             this.positionX -= this.width;
             this.domElement.style.left = this.positionX + "px";
-            console.log(this.positionX);
+
         } else {
             this.positionX = board.offsetWidth - this.width;
             this.domElement.style.left = this.positionX + "px";
         }
-        this.moveDirection = "left";
+        this.canTurn = true;
         
     }
 
@@ -165,7 +171,36 @@ class Player {
 
 class Fruit{
     constructor(){
+        this.width = fieldSize;
+        this.height = fieldSize;
 
+        this.positionX = fieldSize * Math.floor(Math.random() * (columns - 0));
+        this.positionY =  fieldSize * Math.floor(Math.random() * (columns - 0));
+        this.domElement = null;
+
+        this.createDomElement();
+
+    }
+
+
+
+    createDomElement(){
+        this.domElement = document.createElement('div');
+
+        this.domElement.id = "fruit";
+        this.domElement.style.width = this.width + "px";
+        this.domElement.style.height = this.height + "px";
+        this.domElement.style.bottom = this.positionY + "px";
+        this.domElement.style.left = this.positionX + "px";
+    
+
+        // append to the dom
+        board.appendChild(this.domElement)
+
+    }
+
+    removeInstance(){
+        board.removeChild(this.domElement);
     }
 
 }
