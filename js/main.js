@@ -9,7 +9,9 @@ const interval = 1000/level; //refresh interval for movement
 
 class Game {
     constructor(){
-        this.player = null;
+        this.snake = null;
+        this.snakeBody = [];
+        
         this.fruit = null;
         this.points = 0;
         this.moveDirection = null;
@@ -19,33 +21,65 @@ class Game {
         more than once per interval, otherwise you could do a U-turn (180°)
         if you hit the keys faster than the interval : */ 
       
-        this.lastMove = null;
+        
 
 
     }
     
     start(){
-        this.player = new Player();
+        this.snake = new Snake(11, 11);
+        this.snakePart = new Snake (10,11);
         this.fruit = new Fruit();
         this.moveDirection = "right";
-
-
+        this.snakeBody.push(this.snake);
+        this.snakeBody.push(this.snakePart);
+        
         this.attachEventListeners();
 
-        //move player
+        //move snake
         setInterval(() => {
             this.canTurn = true;
             this.detectFruitCollision(this.fruit);
-                switch(this.moveDirection){
-                    case "up": this.player.moveUp();
-                        break;
-                    case "right": this.player.moveRight();
-                        break;
-                    case "down": this.player.moveDown();
-                        break;
-                    case "left": this.player.moveLeft();
-                        break;
+            for(let i=0; i<this.snakeBody.length; i++){
+                if (i==0){
+                    switch(this.moveDirection){
+                        case "up": this.snake.moveUp();
+
+                            break;
+                        case "right": this.snake.moveRight();
+                            break;
+                        case "down": this.snake.moveDown();
+                            break;
+                        case "left": this.snake.moveLeft();
+                            break;
+                    }
+                    continue;
                 }
+                if(this.snakeBody.length > 1){
+                    const lm1 = this.snakeBody[i-1].lastMoves.at(-1);
+                    const lm2 = this.snakeBody[i-1].lastMoves.at(-2);
+                    const snakePart = this.snakeBody[i];
+                    if(lm1=="up" && lm2=="up") {snakePart.moveUp();}
+                    if(lm1=="up" && lm2=="right") {snakePart.moveRight();}
+                    if(lm1=="up" && lm2=="left") {snakePart.moveLeft();}
+                    if(lm1=="right" && lm2==undefined) {snakePart.moveRight();}
+                    if(lm1=="right" && lm2=="right") {snakePart.moveRight();}
+                    if(lm1=="right" && lm2=="down") {snakePart.moveDown();}
+                    if(lm1=="right" && lm2=="up") {snakePart.moveUp();}
+                    if(lm1=="left" && lm2=="left") {snakePart.moveLeft();}
+                    if(lm1=="left" && lm2=="down") {snakePart.moveDown();}
+                    if(lm1=="left" && lm2=="up") {snakePart.moveUp();}
+                    if(lm1=="down" && lm2=="down") {snakePart.moveDown();}
+                    if(lm1=="down" && lm2=="right") {snakePart.moveRight();}
+                    if(lm1=="down" && lm2=="left") {snakePart.moveLeft();}
+                }
+
+               
+                
+
+
+            }
+
         }, interval);
 
         
@@ -69,119 +103,139 @@ class Game {
                 this.canTurn = false;
 
             }
-            else {
-                console.log("grr");
-            }
+
         });
     }
 
     detectFruitCollision(fruit){
-        if (this.player.positionX === fruit.positionX && 
-            this.player.positionY === fruit.positionY) {    
+        if (this.snake.positionX === fruit.positionX && 
+            this.snake.positionY === fruit.positionY) {    
             this.points += 100;
+            console.log("Points: " + this.points);
             this.fruit.removeInstance();
             this.fruit = new Fruit();
-            console.log(this.points);
-        }
 
+            // this.createBody(fruit.positionX, fruit.positionY, this.moveDirection);
+
+
+        }
     }
 
+    // createBody(position_X, position_Y, moveDirection){
+    //     let offsetX = 0;
+    //     let offsetY = 0;
+    //     if (this.snakeBody.length > 1){
+    //         switch (moveDirection) {
+    //             case 'up':  offsetY -= 1;
+    //             break;
+    //             case 'right': offsetX -= 1;
+    //             break;
+    //             case 'down': offsetY += 1;
+    //             break;
+    //             case 'left': offsetX += 1;
+    //             break;
+    
+    //         }
 
+    //     }
+
+    //     const sb = new SnakeBody(this.snakeBody, offsetX, offsetY);
+    //     this.snakeBody.push(sb);
+        
+
+    // }
 }
 
-class Player {
-    constructor(){
+class Snake {
+    constructor(positionX, positionY){
         this.width = fieldSize;
         this.height = fieldSize;
-        this.positionX = board.offsetWidth/2;
-        this.positionY =  board.offsetWidth/2;
+        this.positionX = positionX;
+        this.positionY =  positionY;
         this.domElement = null;
-
         this.createDomElement();
+        this.lastMoves = [];
     }
 
     createDomElement(){
         this.domElement = document.createElement('div');
 
-        this.domElement.id = "player";
+        this.domElement.className = "snake";
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
-        this.domElement.style.bottom = this.positionY + "px";
-        this.domElement.style.left = this.positionX + "px";
-    
-
+        this.domElement.style.left = this.positionX * fieldSize + "px";
+        this.domElement.style.bottom = this.positionY * fieldSize + "px";
+        
         // append to the dom
         // const board = document.getElementById("board");
         board.appendChild(this.domElement)
     }
 
-
     moveUp(){
-        if (this.positionY < board.offsetHeight - fieldSize) {
-            this.positionY += fieldSize;
-            this.domElement.style.bottom = this.positionY + "px";
+        if (this.positionY < columns - 1) {
+            this.positionY += 1;
+            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         } else {
             this.positionY = 0;
-            this.domElement.style.bottom = this.positionY + "px";
+            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
         this.canTurn = true;
-
+        this.lastMoves.push("up"); 
     }
 
     moveDown(){
         if (this.positionY > 0) {
-            this.positionY -= fieldSize;
-            this.domElement.style.bottom = this.positionY + "px";
-
+            this.positionY -= 1;
+            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         } else {
-            this.positionY = board.offsetHeight - fieldSize;
-            this.domElement.style.bottom = this.positionY + "px";
+            this.positionY = columns-1;
+            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
         this.canTurn = true;
-
+        this.lastMoves.push("down"); 
     }
 
     moveRight(){
-        if (this.positionX < board.offsetWidth - fieldSize) {
-            this.positionX += fieldSize;
-            this.domElement.style.left = this.positionX + "px";
+        if (this.positionX < columns - 1) {
+            this.positionX += 1;
+            this.domElement.style.left = this.positionX * fieldSize + "px";
         } else {
             this.positionX = 0;
-            this.domElement.style.left = this.positionX + "px";
+            this.domElement.style.left = this.positionX * fieldSize + "px";
         }
-        this.canTurn = true;
-
-        
+        this.canTurn = true;  
+        this.lastMoves.push("right");   
     }
 
     moveLeft(){
         if (this.positionX > 0) {
-            this.positionX -= this.width;
-            this.domElement.style.left = this.positionX + "px";
+            this.positionX -= 1;
+            this.domElement.style.left = this.positionX * fieldSize + "px";
 
         } else {
-            this.positionX = board.offsetWidth - this.width;
-            this.domElement.style.left = this.positionX + "px";
+            this.positionX = columns - 1;
+            this.domElement.style.left = this.positionX * fieldSize + "px";
         }
         this.canTurn = true;
-        
+        this.lastMoves.push("left");  
     }
 
+
+
 }
+
 
 class Fruit{
     constructor(){
         this.width = fieldSize;
         this.height = fieldSize;
 
-        this.positionX = fieldSize * Math.floor(Math.random() * (columns - 0));
-        this.positionY =  fieldSize * Math.floor(Math.random() * (columns - 0));
+        this.positionX =  Math.floor(Math.random() * (columns - 0));
+        this.positionY =  Math.floor(Math.random() * (columns - 0));
         this.domElement = null;
 
         this.createDomElement();
-
     }
-
 
 
     createDomElement(){
@@ -190,8 +244,8 @@ class Fruit{
         this.domElement.id = "fruit";
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
-        this.domElement.style.bottom = this.positionY + "px";
-        this.domElement.style.left = this.positionX + "px";
+        this.domElement.style.bottom = fieldSize * this.positionY + "px";
+        this.domElement.style.left = fieldSize * this.positionX + "px";
     
 
         // append to the dom

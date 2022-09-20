@@ -17,10 +17,12 @@ body {
     
 }
 
-#player {
+.snake {
     position: absolute;
     background-color: steelblue;
     z-index: 1;
+    border: 2px solid black;
+    box-sizing: border-box;
 }
 
 #fruit {
