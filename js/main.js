@@ -7,6 +7,8 @@ const level = 10; // the higher the faster does the player move: level-times per
 const interval = 1000/level; //refresh interval for movement
 
 
+
+
 class Game {
     constructor(){
         this.snake = null;
@@ -28,11 +30,11 @@ class Game {
     
     start(){
         this.snake = new Snake(11, 11);
-        this.snakePart = new Snake (10,11);
+
         this.fruit = new Fruit();
         this.moveDirection = "right";
         this.snakeBody.push(this.snake);
-        this.snakeBody.push(this.snakePart);
+
         
         this.attachEventListeners();
 
@@ -41,10 +43,10 @@ class Game {
             this.canTurn = true;
             this.detectFruitCollision(this.fruit);
             for(let i=0; i<this.snakeBody.length; i++){
+
                 if (i==0){
                     switch(this.moveDirection){
                         case "up": this.snake.moveUp();
-
                             break;
                         case "right": this.snake.moveRight();
                             break;
@@ -54,6 +56,9 @@ class Game {
                             break;
                     }
                     continue;
+                }
+                if (i===1){
+
                 }
                 if(this.snakeBody.length > 1){
                     const lm1 = this.snakeBody[i-1].lastMoves.at(-1);
@@ -115,35 +120,24 @@ class Game {
             this.fruit.removeInstance();
             this.fruit = new Fruit();
 
-            // this.createBody(fruit.positionX, fruit.positionY, this.moveDirection);
+            this.createBody(this.snakeBody.at(-1));
 
 
         }
     }
 
-    // createBody(position_X, position_Y, moveDirection){
-    //     let offsetX = 0;
-    //     let offsetY = 0;
-    //     if (this.snakeBody.length > 1){
-    //         switch (moveDirection) {
-    //             case 'up':  offsetY -= 1;
-    //             break;
-    //             case 'right': offsetX -= 1;
-    //             break;
-    //             case 'down': offsetY += 1;
-    //             break;
-    //             case 'left': offsetX += 1;
-    //             break;
-    
-    //         }
+    createBody(lastSnakePart){
+        let x = lastSnakePart.positionX;
+        let y  = lastSnakePart.positionY;
 
-    //     }
-
-    //     const sb = new SnakeBody(this.snakeBody, offsetX, offsetY);
-    //     this.snakeBody.push(sb);
+        if(lastSnakePart.lastMoves.at(-1) === "up"){y--;}
+        if(lastSnakePart.lastMoves.at(-1) === "right"){x--;}
+        if(lastSnakePart.lastMoves.at(-1) === "down"){y++;}
+        if(lastSnakePart.lastMoves.at(-1) === "left"){x++;}
         
-
-    // }
+        const sb = new Snake(x, y);
+        this.snakeBody.push(sb);
+    }
 }
 
 class Snake {
@@ -180,7 +174,10 @@ class Snake {
             this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
         this.canTurn = true;
-        this.lastMoves.push("up"); 
+        this.lastMoves.push("up");
+        if(this.lastMoves.length>2){
+            this.lastMoves.shift();
+        }
     }
 
     moveDown(){
@@ -192,7 +189,10 @@ class Snake {
             this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
         this.canTurn = true;
-        this.lastMoves.push("down"); 
+        this.lastMoves.push("down");
+        if(this.lastMoves.length>2){
+            this.lastMoves.shift();
+        }
     }
 
     moveRight(){
@@ -204,7 +204,11 @@ class Snake {
             this.domElement.style.left = this.positionX * fieldSize + "px";
         }
         this.canTurn = true;  
-        this.lastMoves.push("right");   
+        this.lastMoves.push("right");
+        if(this.lastMoves.length>2){
+            this.lastMoves.shift();
+        }
+
     }
 
     moveLeft(){
@@ -217,7 +221,10 @@ class Snake {
             this.domElement.style.left = this.positionX * fieldSize + "px";
         }
         this.canTurn = true;
-        this.lastMoves.push("left");  
+        this.lastMoves.push("left");
+        if(this.lastMoves.length>2){
+            this.lastMoves.shift();
+        }
     }
 
 
@@ -259,5 +266,8 @@ class Fruit{
 
 }
 
+
+
+//init
 const game = new Game();
 game.start();
