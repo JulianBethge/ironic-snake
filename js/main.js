@@ -1,13 +1,10 @@
 //game constants
-const columns = 30; //number of columns/ rows
+const columns = 24; //number of columns/ rows
 const fieldSize = Math.floor(board.offsetWidth/columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
-const level = 20; // the higher the faster does the player move: level-times per second
+const level = 10; // the higher the faster does the player move: level-times per second
 const interval = 1000/level; //refresh interval for movement
-
-
-
 
 
 class Game {
@@ -25,26 +22,31 @@ class Game {
         if you hit the keys faster than the interval : */ 
 
         this.intervalId = null;
-        
-     
-
-
     }
     
     start(){
         this.snake = new Snake(columns/2, columns/2);
-
-        this.fruit = new Fruit();
+       
         this.moveDirection = "right";
         this.snakeBody.push(this.snake);
-
+        this.fruit = new Fruit(this.random());
         
         this.attachEventListeners();
 
         //move snake
         this.intervalId = setInterval(() => {
             this.canTurn = true;
-            this.detectFruitCollision(this.fruit);
+            if(this.detectFruitCollision(this.fruit)){
+                this.points += 100;
+                console.log("Points: " + this.points);
+                this.fruit.removeInstance();
+                this.fruit = new Fruit(this.random());
+
+                if(this.points> 100*(columns**2)-1){
+                    clearInterval(this.intervalId);
+                    alert(`You've won! You've earned ${this.points} Points!`);
+                }
+            }
          
             for(let i=0; i<this.snakeBody.length; i++){
                 if (i==0){
@@ -83,7 +85,7 @@ class Game {
 
             if(this.detectSnakeCollision(this.snakeBody)){
                 clearInterval(this.intervalId);
-                alert(`Game Over my Friend. You've earned ${this.points} Points!`)
+                alert(`Game Over my Friend. You've earned ${this.points} Points!`);
             }
 
         }, interval);
@@ -112,14 +114,8 @@ class Game {
     detectFruitCollision(fruit){
         if (this.snake.positionX === fruit.positionX && 
             this.snake.positionY === fruit.positionY) {    
-            this.points += 100;
-            console.log("Points: " + this.points);
-            this.fruit.removeInstance();
-            this.fruit = new Fruit();
-
             this.createBody(this.snakeBody.at(-1));
-
-
+            return true;
         }
     }
 
@@ -149,6 +145,38 @@ class Game {
         
         const sb = new Snake(x, y);
         this.snakeBody.push(sb);
+    }
+
+    random(){
+        let result = [];
+        const snakeArr = [];
+
+        const includesMultiDimension = (arr, res) =>
+        JSON.stringify(arr).includes(JSON.stringify(res));
+
+
+         // get all coordinates of the snake to exclude them from possible fruit spawn places
+        this.snakeBody.forEach(function(part){
+            const coordinates = [];
+            coordinates.push(part.positionX);
+            coordinates.push(part.positionY);
+            snakeArr.push(coordinates);  
+        });
+
+        // test if the random coordinates are hidden by snake body, 
+        // if yes, it generates new random numbers.
+        while(true){ 
+            result = [];
+            let x = Math.floor(Math.random() * (columns - 0));
+            let y = Math.floor(Math.random() * (columns - 0));
+            result.push(x);
+            result.push(y);
+            
+            if (!includesMultiDimension(snakeArr, result)){
+                break; 
+            }
+        }
+        return result;
     }
 }
 
@@ -180,11 +208,10 @@ class Snake {
     moveUp(){
         if (this.positionY < columns - 1) {
             this.positionY += 1;
-            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         } else {
             this.positionY = 0;
-            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
+        this.domElement.style.bottom = this.positionY * fieldSize + "px";
         this.canTurn = true;
         this.lastMoves.push("up");
         if(this.lastMoves.length>2){
@@ -195,11 +222,10 @@ class Snake {
     moveDown(){
         if (this.positionY > 0) {
             this.positionY -= 1;
-            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         } else {
             this.positionY = columns-1;
-            this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
+        this.domElement.style.bottom = this.positionY * fieldSize + "px";
         this.canTurn = true;
         this.lastMoves.push("down");
         if(this.lastMoves.length>2){
@@ -210,11 +236,10 @@ class Snake {
     moveRight(){
         if (this.positionX < columns - 1) {
             this.positionX += 1;
-            this.domElement.style.left = this.positionX * fieldSize + "px";
         } else {
             this.positionX = 0;
-            this.domElement.style.left = this.positionX * fieldSize + "px";
         }
+        this.domElement.style.left = this.positionX * fieldSize + "px";
         this.canTurn = true;  
         this.lastMoves.push("right");
         if(this.lastMoves.length>2){
@@ -225,12 +250,10 @@ class Snake {
     moveLeft(){
         if (this.positionX > 0) {
             this.positionX -= 1;
-            this.domElement.style.left = this.positionX * fieldSize + "px";
-
         } else {
             this.positionX = columns - 1;
-            this.domElement.style.left = this.positionX * fieldSize + "px";
         }
+        this.domElement.style.left = this.positionX * fieldSize + "px";
         this.canTurn = true;
         this.lastMoves.push("left");
         if(this.lastMoves.length>2){
@@ -240,12 +263,14 @@ class Snake {
 }
 
 class Fruit{
-    constructor(){
+    constructor(randomArr){
         this.width = fieldSize;
         this.height = fieldSize;
 
-        this.positionX =  Math.floor(Math.random() * (columns - 0));
-        this.positionY =  Math.floor(Math.random() * (columns - 0));
+        this.positionX =  randomArr[0];
+        this.positionY =  randomArr[1];
+        // this.positionX =  Math.floor(Math.random() * (columns - 0));
+        // this.positionY =  Math.floor(Math.random() * (columns - 0));
         this.domElement = null;
 
         this.createDomElement();
