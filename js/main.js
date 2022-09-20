@@ -1,10 +1,11 @@
 //game constants
-const columns = 24; //number of columns/ rows
+const columns = 30; //number of columns/ rows
 const fieldSize = Math.floor(board.offsetWidth/columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
-const level = 10; // the higher the faster does the player move: level-times per second
+const level = 20; // the higher the faster does the player move: level-times per second
 const interval = 1000/level; //refresh interval for movement
+
 
 
 
@@ -22,14 +23,16 @@ class Game {
         /* ^ a variable that will prevent that you can change direction 
         more than once per interval, otherwise you could do a U-turn (180°)
         if you hit the keys faster than the interval : */ 
-      
+
+        this.intervalId = null;
         
+     
 
 
     }
     
     start(){
-        this.snake = new Snake(11, 11);
+        this.snake = new Snake(columns/2, columns/2);
 
         this.fruit = new Fruit();
         this.moveDirection = "right";
@@ -39,11 +42,11 @@ class Game {
         this.attachEventListeners();
 
         //move snake
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.canTurn = true;
             this.detectFruitCollision(this.fruit);
+         
             for(let i=0; i<this.snakeBody.length; i++){
-
                 if (i==0){
                     switch(this.moveDirection){
                         case "up": this.snake.moveUp();
@@ -57,9 +60,7 @@ class Game {
                     }
                     continue;
                 }
-                if (i===1){
 
-                }
                 if(this.snakeBody.length > 1){
                     const lm1 = this.snakeBody[i-1].lastMoves.at(-1);
                     const lm2 = this.snakeBody[i-1].lastMoves.at(-2);
@@ -78,16 +79,14 @@ class Game {
                     if(lm1=="down" && lm2=="right") {snakePart.moveRight();}
                     if(lm1=="down" && lm2=="left") {snakePart.moveLeft();}
                 }
+            }
 
-               
-                
-
-
+            if(this.detectSnakeCollision(this.snakeBody)){
+                clearInterval(this.intervalId);
+                alert(`Game Over my Friend. You've earned ${this.points} Points!`)
             }
 
         }, interval);
-
-        
     }
 
     attachEventListeners(){
@@ -106,9 +105,7 @@ class Game {
                     this.moveDirection = "left";
                 }
                 this.canTurn = false;
-
             }
-
         });
     }
 
@@ -124,6 +121,21 @@ class Game {
 
 
         }
+    }
+
+    detectSnakeCollision(snakeBody){
+        let hasCollided = false;
+                
+        const body = snakeBody.slice(1);
+        const head = snakeBody.slice(0,1);
+
+        body.forEach(function(snakePart){
+            if (head[0].positionX === snakePart.positionX && 
+                head[0].positionY === snakePart.positionY) {    
+                  hasCollided = true;
+            }
+        });
+        return hasCollided;
     }
 
     createBody(lastSnakePart){
@@ -208,7 +220,6 @@ class Snake {
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
         }
-
     }
 
     moveLeft(){
@@ -226,11 +237,7 @@ class Snake {
             this.lastMoves.shift();
         }
     }
-
-
-
 }
-
 
 class Fruit{
     constructor(){
@@ -244,7 +251,6 @@ class Fruit{
         this.createDomElement();
     }
 
-
     createDomElement(){
         this.domElement = document.createElement('div');
 
@@ -254,19 +260,14 @@ class Fruit{
         this.domElement.style.bottom = fieldSize * this.positionY + "px";
         this.domElement.style.left = fieldSize * this.positionX + "px";
     
-
         // append to the dom
         board.appendChild(this.domElement)
-
     }
 
     removeInstance(){
         board.removeChild(this.domElement);
     }
-
 }
-
-
 
 //init
 const game = new Game();
