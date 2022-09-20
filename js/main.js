@@ -17,7 +17,7 @@ class Game {
         this.moveDirection = null;
 
         this.canTurn = false;     
-        /* ^ a variable that will prevent that you can change direction 
+        /* ^ a variable that will prevent that the player can change direction 
         more than once per interval, otherwise you could do a U-turn (180°)
         if you hit the keys faster than the interval : */ 
 
@@ -42,7 +42,7 @@ class Game {
                 this.fruit.removeInstance();
                 this.fruit = new Fruit(this.random());
 
-                if(this.points> 100*(columns**2)-1){
+                if(this.points> 100*(columns**2)-columns){
                     clearInterval(this.intervalId);
                     alert(`You've won! You've earned ${this.points} Points!`);
                 }
@@ -67,19 +67,11 @@ class Game {
                     const lm1 = this.snakeBody[i-1].lastMoves.at(-1);
                     const lm2 = this.snakeBody[i-1].lastMoves.at(-2);
                     const snakePart = this.snakeBody[i];
-                    if(lm1=="up" && lm2=="up") {snakePart.moveUp();}
-                    if(lm1=="up" && lm2=="right") {snakePart.moveRight();}
-                    if(lm1=="up" && lm2=="left") {snakePart.moveLeft();}
                     if(lm1=="right" && lm2==undefined) {snakePart.moveRight();}
-                    if(lm1=="right" && lm2=="right") {snakePart.moveRight();}
-                    if(lm1=="right" && lm2=="down") {snakePart.moveDown();}
-                    if(lm1=="right" && lm2=="up") {snakePart.moveUp();}
-                    if(lm1=="left" && lm2=="left") {snakePart.moveLeft();}
-                    if(lm1=="left" && lm2=="down") {snakePart.moveDown();}
-                    if(lm1=="left" && lm2=="up") {snakePart.moveUp();}
-                    if(lm1=="down" && lm2=="down") {snakePart.moveDown();}
-                    if(lm1=="down" && lm2=="right") {snakePart.moveRight();}
-                    if(lm1=="down" && lm2=="left") {snakePart.moveLeft();}
+                    if(lm2=="up") {snakePart.moveUp();}
+                    if(lm2=="right") {snakePart.moveRight();}
+                    if(lm2=="left") {snakePart.moveLeft();}
+                    if(lm2=="down") {snakePart.moveDown();}
                 }
             }
 
