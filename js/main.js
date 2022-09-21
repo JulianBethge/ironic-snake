@@ -16,11 +16,6 @@ class Game {
         this.points = 0;
         this.moveDirection = null;
 
-        this.canTurn = false;     
-        /* ^ a variable that will prevent that the player can change direction 
-        more than once per interval, otherwise you could do a U-turn (180°)
-        if you hit the keys faster than the interval : */ 
-
         this.intervalId = null;
     }
     
@@ -30,19 +25,24 @@ class Game {
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
-        
+
         this.attachEventListeners();
+        score.innerText = this.points;
+        
+        
 
         //move snake
         this.intervalId = setInterval(() => {
-            this.canTurn = true;
+            this.snakeHead.plannedMoves = [];
+
             if(this.detectFruitCollision(this.fruit)){
                 this.points += 100;
-                console.log("Points: " + this.points);
+
+                score.innerText = this.points;
                 this.fruit.removeInstance();
                 this.fruit = new Fruit(this.random());
 
-                if(this.points> 100*(columns**2)-columns){
+                if(this.points > 100*((columns**2)-columns)){
                     clearInterval(this.intervalId);
                     alert(`You've won! You've earned ${this.points} Points!`);
                 }
@@ -91,21 +91,20 @@ class Game {
 
     attachEventListeners(){
         document.addEventListener("keydown", (event) => {
-            if (this.canTurn){
-                if ((this.moveDirection === "right" || this.moveDirection === "left") && event.key === "ArrowUp"){
-                    this.moveDirection = "up";
-                }
-                if ((this.moveDirection === "up" || this.moveDirection === "down") && event.key === "ArrowRight"){
-                    this.moveDirection = "right";
-                }
-                if ((this.moveDirection === "left" || this.moveDirection === "right") && event.key === "ArrowDown"){
-                    this.moveDirection = "down";
-                }
-                if ((this.moveDirection === "up" || this.moveDirection === "down") && event.key === "ArrowLeft"){
-                    this.moveDirection = "left";
-                }
-                this.canTurn = false;
+   
+            if ((this.snakeHead.lastMoves.at(-1) === "left" || this.snakeHead.lastMoves.at(-1) == "right") && event.key === "ArrowUp"){
+                this.moveDirection = "up";
             }
+            if ((this.snakeHead.lastMoves.at(-1) === "up" || this.snakeHead.lastMoves.at(-1) == "down") && event.key === "ArrowRight"){
+                this.moveDirection = "right";
+            }
+            if ((this.snakeHead.lastMoves.at(-1) === "left" || this.snakeHead.lastMoves.at(-1) == "right") && event.key === "ArrowDown"){
+                this.moveDirection = "down";
+            }
+            if ((this.snakeHead.lastMoves.at(-1) === "up" || this.snakeHead.lastMoves.at(-1) == "down") && event.key === "ArrowLeft"){
+                this.moveDirection = "left";
+            }
+
         });
     }
 
@@ -123,7 +122,7 @@ class Game {
         const body = snakeBody.slice(1);
         const head = snakeBody.slice(0,1);
 
-        body.forEach(function(currentSnakeSegment){
+        body.forEach((currentSnakeSegment) => {
             if (head[0].positionX === currentSnakeSegment.positionX && 
                 head[0].positionY === currentSnakeSegment.positionY) {    
                   hasCollided = true;
@@ -186,7 +185,10 @@ class SnakeSegment {
         this.positionY =  positionY;
         this.domElement = null;
         this.createDomElement();
-        this.lastMoves = [];
+        this.lastMoves = []; // store the last moves
+        
+        //beta:
+        this.plannedMoves = [];
     }
 
     createDomElement(){
@@ -210,7 +212,6 @@ class SnakeSegment {
             this.positionY = 0;
         }
         this.domElement.style.bottom = this.positionY * fieldSize + "px";
-        this.canTurn = true;
         this.lastMoves.push("up");
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
@@ -224,7 +225,6 @@ class SnakeSegment {
             this.positionY = columns-1;
         }
         this.domElement.style.bottom = this.positionY * fieldSize + "px";
-        this.canTurn = true;
         this.lastMoves.push("down");
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
@@ -238,7 +238,6 @@ class SnakeSegment {
             this.positionX = 0;
         }
         this.domElement.style.left = this.positionX * fieldSize + "px";
-        this.canTurn = true;  
         this.lastMoves.push("right");
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
@@ -252,7 +251,6 @@ class SnakeSegment {
             this.positionX = columns - 1;
         }
         this.domElement.style.left = this.positionX * fieldSize + "px";
-        this.canTurn = true;
         this.lastMoves.push("left");
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
@@ -267,8 +265,7 @@ class Fruit{
 
         this.positionX =  randomArr[0];
         this.positionY =  randomArr[1];
-        // this.positionX =  Math.floor(Math.random() * (columns - 0));
-        // this.positionY =  Math.floor(Math.random() * (columns - 0));
+        
         this.domElement = null;
 
         this.createDomElement();

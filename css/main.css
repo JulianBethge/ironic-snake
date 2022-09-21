@@ -1,20 +1,24 @@
+@import url('http://fonts.cdnfonts.com/css/led-digital-7');
+
 body {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* flex-direction: column; */
     margin: 0;
     padding: 0;
     background-color: black;
     height: 100vh;
     width: 100vw;
+    font-family: Calibri, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
 }
 
 #board {
     height: 90vh;
     width: 90vh;
-    background-color: lightblue;
-    position: relative;
-    
+    background-color: lightblue; 
+    position: relative; 
+
 }
 
 .snake {
@@ -23,10 +27,38 @@ body {
     z-index: 1;
     border: 2px solid black;
     box-sizing: border-box;
+    /* transition-property: color; */
 }
 
 #fruit {
     background-color: crimson;
     border-radius: 50%;
     position: absolute;
+
+
+}
+
+.text {
+    color:yellowgreen;
+    position: relative;
+    padding-right: 10vw; 
+}
+
+#score {
+    color: yellowgreen;
+    border: 1px solid red;
+    padding: 0.5em;
+    font-family: 'LED Digital 7', sans-serif;
+    font-size: 2em;
+    text-shadow: 0 0 1em, 0 0 2em;
+
+
+}
+
+.sides {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+    padding: 5%;
+    
 }
