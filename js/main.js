@@ -9,8 +9,8 @@ const interval = 1000/level; //refresh interval for movement
 
 class Game {
     constructor(){
-        this.snake = null;
-        this.snakeBody = [];
+        this.snakeHead = null; // will be the first SnakeSegment
+        this.snake = []; // will be an array of SnakeSegments
         
         this.fruit = null;
         this.points = 0;
@@ -25,10 +25,10 @@ class Game {
     }
     
     start(){
-        this.snake = new Snake(columns/2, columns/2);
+        this.snakeHead = new SnakeSegment(columns/2, columns/2);
        
         this.moveDirection = "right";
-        this.snakeBody.push(this.snake);
+        this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
         
         this.attachEventListeners();
@@ -48,34 +48,40 @@ class Game {
                 }
             }
          
-            for(let i=0; i<this.snakeBody.length; i++){
+            for(let i=0; i<this.snake.length; i++){
                 if (i==0){
                     switch(this.moveDirection){
-                        case "up": this.snake.moveUp();
+                        case "up": this.snakeHead.moveUp();
                             break;
-                        case "right": this.snake.moveRight();
+                        case "right": this.snakeHead.moveRight();
                             break;
-                        case "down": this.snake.moveDown();
+                        case "down": this.snakeHead.moveDown();
                             break;
-                        case "left": this.snake.moveLeft();
+                        case "left": this.snakeHead.moveLeft();
                             break;
                     }
                     continue;
                 }
 
-                if(this.snakeBody.length > 1){
-                    const lm1 = this.snakeBody[i-1].lastMoves.at(-1);
-                    const lm2 = this.snakeBody[i-1].lastMoves.at(-2);
-                    const snakePart = this.snakeBody[i];
-                    if(lm1=="right" && lm2==undefined) {snakePart.moveRight();}
-                    if(lm2=="up") {snakePart.moveUp();}
-                    if(lm2=="right") {snakePart.moveRight();}
-                    if(lm2=="left") {snakePart.moveLeft();}
-                    if(lm2=="down") {snakePart.moveDown();}
+                if(this.snake.length > 1){
+                    //get the second last move of the preceding snake segment:
+                    const secondLastMove = this.snake[i-1].lastMoves.at(-2);  
+                    const currentSnakeSegment = this.snake[i];
+                    switch(secondLastMove){
+                        case "up": currentSnakeSegment.moveUp();
+                            break;
+                        case "right": currentSnakeSegment.moveRight();
+                            break;
+                        case "down": currentSnakeSegment.moveDown();
+                            break;
+                        case "left": currentSnakeSegment.moveLeft();
+                            break;
+
+                    }
                 }
             }
 
-            if(this.detectSnakeCollision(this.snakeBody)){
+            if(this.detectSnakeCollision(this.snake)){
                 clearInterval(this.intervalId);
                 alert(`Game Over my Friend. You've earned ${this.points} Points!`);
             }
@@ -104,9 +110,9 @@ class Game {
     }
 
     detectFruitCollision(fruit){
-        if (this.snake.positionX === fruit.positionX && 
-            this.snake.positionY === fruit.positionY) {    
-            this.createBody(this.snakeBody.at(-1));
+        if (this.snakeHead.positionX === fruit.positionX && 
+            this.snakeHead.positionY === fruit.positionY) {    
+            this.createSegment(this.snake.at(-1));
             return true;
         }
     }
@@ -117,26 +123,26 @@ class Game {
         const body = snakeBody.slice(1);
         const head = snakeBody.slice(0,1);
 
-        body.forEach(function(snakePart){
-            if (head[0].positionX === snakePart.positionX && 
-                head[0].positionY === snakePart.positionY) {    
+        body.forEach(function(currentSnakeSegment){
+            if (head[0].positionX === currentSnakeSegment.positionX && 
+                head[0].positionY === currentSnakeSegment.positionY) {    
                   hasCollided = true;
             }
         });
         return hasCollided;
     }
 
-    createBody(lastSnakePart){
-        let x = lastSnakePart.positionX;
-        let y  = lastSnakePart.positionY;
+    createSegment(lastSnakeSegment){
+        let x = lastSnakeSegment.positionX;
+        let y  = lastSnakeSegment.positionY;
 
-        if(lastSnakePart.lastMoves.at(-1) === "up"){y--;}
-        if(lastSnakePart.lastMoves.at(-1) === "right"){x--;}
-        if(lastSnakePart.lastMoves.at(-1) === "down"){y++;}
-        if(lastSnakePart.lastMoves.at(-1) === "left"){x++;}
+        if(lastSnakeSegment.lastMoves.at(-1) === "up"){y--;}
+        if(lastSnakeSegment.lastMoves.at(-1) === "right"){x--;}
+        if(lastSnakeSegment.lastMoves.at(-1) === "down"){y++;}
+        if(lastSnakeSegment.lastMoves.at(-1) === "left"){x++;}
         
-        const sb = new Snake(x, y);
-        this.snakeBody.push(sb);
+        const sb = new SnakeSegment(x, y);
+        this.snake.push(sb);
     }
 
     random(){
@@ -148,7 +154,7 @@ class Game {
 
 
          // get all coordinates of the snake to exclude them from possible fruit spawn places
-        this.snakeBody.forEach(function(part){
+        this.snake.forEach(function(part){
             const coordinates = [];
             coordinates.push(part.positionX);
             coordinates.push(part.positionY);
@@ -172,7 +178,7 @@ class Game {
     }
 }
 
-class Snake {
+class SnakeSegment {
     constructor(positionX, positionY){
         this.width = fieldSize;
         this.height = fieldSize;
