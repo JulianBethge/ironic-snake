@@ -1,10 +1,9 @@
-@import url('http://fonts.cdnfonts.com/css/led-digital-7');
+@import url('//fonts.cdnfonts.com/css/led-digital-7');
 
 body {
     display: flex;
     align-items: center;
-    justify-content: center;
-    /* flex-direction: column; */
+    justify-content: space-evenly;
     margin: 0;
     padding: 0;
     background-color: black;
@@ -18,14 +17,9 @@ body {
     width: 90vh;
     position: relative; 
 
-
     background: #DC2424;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to bottom, #4A569D, #DC2424);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to bottom, #4A569D, #DC2424); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-    
-
-    
 
 }
 
@@ -35,13 +29,21 @@ body {
     z-index: 1;
     border: 2px solid black;
     box-sizing: border-box;
-    /* transition-property: color; */
 
     background: #ffb347;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #ffcc33, #ffb347);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #ffcc33, #ffb347); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
 
-
+.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
 }
 
 #fruit {
@@ -54,22 +56,22 @@ body {
     background: #c21500;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to top, #ffc500, #c21500);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to top, #ffc500, #c21500); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    
-
-
-
 }
 
 .text {
     color:yellowgreen;
     position: relative;
-    padding-right: 10vw; 
+    
+    
+
 }
 
 #score {
     color: yellowgreen;
-    border: 1px solid red;
-    padding: 0.5em;
+    border: 1px solid rgb(1, 41, 1);
+    padding: 0.1em 1em;
+    width: 4em;
+    
     font-family: 'LED Digital 7', sans-serif;
     font-size: 2em;
     text-shadow: 0 0 1em, 0 0 2em;
@@ -80,7 +82,11 @@ body {
 .sides {
     display: flex;
     flex-direction: column;
-    width: 10%;
-    padding: 5%;
+    align-items: center;
+    justify-content: center;
+    width: 4em;
+
+    padding: 0;
+    margin: 2em;
     
 }

@@ -33,8 +33,6 @@ class Game {
 
         //move snake
         this.intervalId = setInterval(() => {
-            this.snakeHead.plannedMoves = [];
-
             if(this.detectFruitCollision(this.fruit)){
                 this.points += 100;
 
@@ -82,8 +80,8 @@ class Game {
             }
 
             if(this.detectSnakeCollision(this.snake)){
-                clearInterval(this.intervalId);
-                alert(`Game Over my Friend. You've earned ${this.points} Points!`);
+                this.createGameOverMessage();
+ 
             }
 
         }, interval);
@@ -118,9 +116,9 @@ class Game {
 
     detectSnakeCollision(snakeBody){
         let hasCollided = false;
-                
-        const body = snakeBody.slice(1);
+        
         const head = snakeBody.slice(0,1);
+        const body = snakeBody.slice(1);
 
         body.forEach((currentSnakeSegment) => {
             if (head[0].positionX === currentSnakeSegment.positionX && 
@@ -153,7 +151,7 @@ class Game {
 
 
          // get all coordinates of the snake to exclude them from possible fruit spawn places
-        this.snake.forEach(function(part){
+        this.snake.forEach(part => {
             const coordinates = [];
             coordinates.push(part.positionX);
             coordinates.push(part.positionY);
@@ -175,6 +173,37 @@ class Game {
         }
         return result;
     }
+
+    createGameOverMessage(){
+
+        clearInterval(this.intervalId);
+        this.snake.forEach(segment => {
+            segment.domElement.classList.add("blur");
+
+        });
+        this.fruit.domElement.classList.add("blur");
+        // board.classList.add("blur");
+        
+        const gameOverMessage = document.createElement('div');
+        
+        gameOverMessage.innerHTML="<p>Game Over</p>";
+        const startBtn = document.createElement("button");
+        startBtn.innerHTML="Start Again?";
+        board.appendChild(gameOverMessage);
+        gameOverMessage.appendChild(startBtn);
+
+        startBtn.addEventListener('click', (event) => {
+            location.reload();
+
+        });
+
+
+
+
+        
+
+    }
+
 }
 
 class SnakeSegment {
@@ -186,9 +215,6 @@ class SnakeSegment {
         this.domElement = null;
         this.createDomElement();
         this.lastMoves = []; // store the last moves
-        
-        //beta:
-        this.plannedMoves = [];
     }
 
     createDomElement(){
@@ -256,6 +282,13 @@ class SnakeSegment {
             this.lastMoves.shift();
         }
     }
+
+    removeInstance(){
+        board.removeChild(this.domElement);
+    }
+
+
+
 }
 
 class Fruit{
@@ -287,6 +320,8 @@ class Fruit{
     removeInstance(){
         board.removeChild(this.domElement);
     }
+
+
 }
 
 //init
