@@ -13,6 +13,10 @@ body {
 }
 
 #board {
+    display: flex;  
+    justify-content: center;
+    align-items: center;
+    
     height: 90vh;
     width: 90vh;
     position: relative; 
@@ -43,25 +47,29 @@ body {
     position: absolute;
     border: 2px solid black;
     box-sizing: border-box;
+    
     background: #c21500;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to top, #ffc500, #c21500);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to top, #ffc500, #c21500); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 
 .text {
-    color:yellowgreen;
+    color:#ffcc33;
     position: relative;
 }
 
 #score {
-    color: yellowgreen;
-    border: 1px solid rgb(1, 41, 1);
+    color: #ffcc33;
+    border: 1px solid #ffcc33;
     padding: 0.1em 1em;
     width: 4em;
     font-family: 'LED Digital 7', sans-serif;
     font-size: 2em;
     text-shadow: 0 0 1em, 0 0 2em;
     text-align: center;
+
+    box-shadow: inset 0 0 5px #8d711d;
 
 }
 
@@ -85,4 +93,37 @@ body {
     width: 100px;
     height: 100px;
     background-color: #ccc;
+    opacity: 0.6;
+}
+
+#game-over {
+    font-size: 3.5em;
+    color:azure;
+    font-weight: 900;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    margin: 0;
+    text-shadow: 4px 4px 2px rgba(0,0,0,0.6);
+
+}
+
+#start-btn{
+    margin: 5%;
+    font-size: 16px;
+    color:white;
+    width: 50%;
+    padding:1em;
+    border-radius: 0.5em;
+    font-weight: 800;
+    
+    background: #D31027;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #EA384D, #D31027);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #EA384D, #D31027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+    border:2px solid black;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+
 }

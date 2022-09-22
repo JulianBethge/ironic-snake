@@ -19,6 +19,7 @@ class Game {
     }
     
     start(){
+        
         this.snakeHead = new SnakeSegment(columns/2, columns/2);
        
         this.moveDirection = "right";
@@ -40,10 +41,7 @@ class Game {
                 this.fruit.removeInstance();
                 this.fruit = new Fruit(this.random());
 
-                if(this.points > 100*((columns**2)-columns)){
-                    clearInterval(this.intervalId);
-                    alert(`You've won! You've earned ${this.points} Points!`);
-                }
+
             }
             
             //retrieving keypressed buffer:
@@ -91,9 +89,13 @@ class Game {
             }
 
             if(this.detectSnakeCollision(this.snake)){
-                this.createGameOverMessage();
- 
+                this.createGameOverMessage("loss");
             }
+
+            if(this.points > 100 * (columns-1)**2){
+                this.createGameOverMessage("win");
+            }
+
 
         }, interval);
     }
@@ -222,7 +224,7 @@ class Game {
         return result;
     }
 
-    createGameOverMessage(){
+    createGameOverMessage(result){
 
         clearInterval(this.intervalId);
         this.snake.forEach(segment => {
@@ -230,12 +232,23 @@ class Game {
 
         });
         this.fruit.domElement.classList.add("blur");
+        // board.classList.add("blur");
         
         const gameOverMessage = document.createElement('div');
+        gameOverMessage.id = "game-over";
+
         
-        gameOverMessage.innerHTML="<p>Game Over</p>";
+        // alert(`You've won! You've earned ${this.points} Points!`);
+        if (result === "loss"){
+            gameOverMessage.innerText="Game Over 😭";
+        }
+        if (result === "win"){
+            gameOverMessage.innerText="You have won 🤩";
+        }
+        
         const startBtn = document.createElement("button");
-        startBtn.innerHTML="Start Again?";
+        startBtn.innerHTML="Start Again!";
+        startBtn.id="start-btn"
         board.appendChild(gameOverMessage);
         gameOverMessage.appendChild(startBtn);
 
