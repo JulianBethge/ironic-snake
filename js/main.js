@@ -11,12 +11,11 @@ class Game {
     constructor(){
         this.snakeHead = null; // will be the first SnakeSegment
         this.snake = []; // will be an array of SnakeSegments
-        
         this.fruit = null;
         this.points = 0;
         this.moveDirection = null;
-
         this.intervalId = null;
+        this.keysPressed = []; // Buffer for pressed key
     }
     
     start(){
@@ -33,6 +32,7 @@ class Game {
 
         //move snake
         this.intervalId = setInterval(() => {
+
             if(this.detectFruitCollision(this.fruit)){
                 this.points += 100;
 
@@ -45,8 +45,18 @@ class Game {
                     alert(`You've won! You've earned ${this.points} Points!`);
                 }
             }
-         
+            
+            //retrieving keypressed buffer:
+            if (this.keysPressed.length>0){
+                this.moveDirection = this.keysPressed[0];
+                this.keysPressed.shift();  
+            }
+            
+            
+            // Iteration through the complete snake array:
             for(let i=0; i<this.snake.length; i++){
+
+                // The movement of the snake's head:
                 if (i==0){
                     switch(this.moveDirection){
                         case "up": this.snakeHead.moveUp();
@@ -61,6 +71,7 @@ class Game {
                     continue;
                 }
 
+                // The Movement of the snake's body (if there is one):
                 if(this.snake.length > 1){
                     //get the second last move of the preceding snake segment:
                     const secondLastMove = this.snake[i-1].lastMoves.at(-2);  
@@ -88,20 +99,57 @@ class Game {
     }
 
     attachEventListeners(){
+        
         document.addEventListener("keydown", (event) => {
+            const lastMove = this.snakeHead.lastMoves.at(-1);
+
+            if (this.keysPressed.length === 0){
+                if ((lastMove === "left" || lastMove == "right") && event.key === "ArrowUp"){
+                    this.keysPressed.push("up");
+                    // this.moveDirection = "up";
+                    
+                }
+                if ((lastMove === "up" || lastMove == "down") && event.key === "ArrowRight"){
+                    // this.moveDirection = "right";
+                    this.keysPressed.push("right");
+                    
+                }
+                if ((lastMove === "left" || lastMove == "right") && event.key === "ArrowDown"){
+                    // this.moveDirection = "down";
+                    this.keysPressed.push("down");
+                    
+                }
+                if ((lastMove === "up" || lastMove == "down") && event.key === "ArrowLeft"){
+                    // this.moveDirection = "left";
+                    this.keysPressed.push("left");   
+                }
+            }
+
+            if (this.keysPressed.length === 1){
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && event.key === "ArrowUp"){
+                    this.keysPressed.push("up");
+                    
+                }
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && event.key === "ArrowRight"){
+                    this.keysPressed.push("right");
+                    
+                }
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && event.key === "ArrowDown"){
+
+                    this.keysPressed.push("down");
+                    
+                }
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && event.key === "ArrowLeft"){
+                    this.keysPressed.push("left");   
+                }
+
+            }
    
-            if ((this.snakeHead.lastMoves.at(-1) === "left" || this.snakeHead.lastMoves.at(-1) == "right") && event.key === "ArrowUp"){
-                this.moveDirection = "up";
-            }
-            if ((this.snakeHead.lastMoves.at(-1) === "up" || this.snakeHead.lastMoves.at(-1) == "down") && event.key === "ArrowRight"){
-                this.moveDirection = "right";
-            }
-            if ((this.snakeHead.lastMoves.at(-1) === "left" || this.snakeHead.lastMoves.at(-1) == "right") && event.key === "ArrowDown"){
-                this.moveDirection = "down";
-            }
-            if ((this.snakeHead.lastMoves.at(-1) === "up" || this.snakeHead.lastMoves.at(-1) == "down") && event.key === "ArrowLeft"){
-                this.moveDirection = "left";
-            }
+
+
+            
+
+
 
         });
     }
@@ -182,7 +230,6 @@ class Game {
 
         });
         this.fruit.domElement.classList.add("blur");
-        // board.classList.add("blur");
         
         const gameOverMessage = document.createElement('div');
         
@@ -197,11 +244,6 @@ class Game {
 
         });
 
-
-
-
-        
-
     }
 
 }
@@ -215,6 +257,7 @@ class SnakeSegment {
         this.domElement = null;
         this.createDomElement();
         this.lastMoves = []; // store the last moves
+
     }
 
     createDomElement(){
@@ -287,8 +330,6 @@ class SnakeSegment {
         board.removeChild(this.domElement);
     }
 
-
-
 }
 
 class Fruit{
@@ -320,7 +361,6 @@ class Fruit{
     removeInstance(){
         board.removeChild(this.domElement);
     }
-
 
 }
 
