@@ -17,14 +17,13 @@ body {
     justify-content: center;
     align-items: center;
     
-    height: 90vh;
-    width: 90vh;
+    height: 95vh;
+    width: 95vh;
     position: relative; 
 
     background: #DC2424;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to bottom, #4A569D, #DC2424);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to bottom, #4A569D, #DC2424); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
 }
 
 .snake {
@@ -42,7 +41,6 @@ body {
 
 
 #fruit {
-    
     border-radius: 50%;
     position: absolute;
     border: 2px solid black;
@@ -54,23 +52,86 @@ body {
 
 }
 
-.text {
-    color:#ffcc33;
+.leaf-1 {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid black;
+    width: 33%;
+	height: 33%;
+	border-radius: 0 90%;
+	background-color: #2bb32b;
+	transform: rotate(0deg); 
+}
+
+.leaf-2 {
+    position: absolute;
+    box-sizing: border-box;
+    left: 22%;
+    top: -4%;
+    border: 1px solid black;
+    width: 33%;
+	height: 33%;
+	border-radius: 0 90%;
+	background-color: #2bb32b;
+	transform: rotate(75deg); 
+}
+
+#score-text {
     position: relative;
 }
 
-#score {
-    color: #ffcc33;
+#score-text h2{
+    margin: 0;
+}
+
+.color{
+    color:#ffcc33;
+}
+
+.border {
     border: 1px solid #ffcc33;
+    box-shadow: inset 0 0 5px #8d711d;
+}
+
+.score-text h2 {
+    margin: 0;
+}
+
+#score {
     padding: 0.1em 1em;
-    width: 4em;
+    width: 3.5em;
     font-family: 'LED Digital 7', sans-serif;
     font-size: 2em;
     text-shadow: 0 0 1em, 0 0 2em;
     text-align: center;
+    position: relative;
+}
 
-    box-shadow: inset 0 0 5px #8d711d;
+#highscore {
+    position: relative;
+    margin: 5em 0em;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
+.black {
+    color: black;
+}
+
+#instructions {
+    color:#ffcc33;
+    position: relative;
+    font-size: 1em;
+    text-shadow: none;
+    font-weight: 90;
+    text-align: center;
+    line-height: 1.6;
+}
+
+#instructions h3 {
+    margin: 1em 0 0.5em 0;
 }
 
 .sides {
@@ -78,10 +139,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 4em;
     padding: 0;
     margin: 2em;
-
+    gap: 1em;
 }
 
 .blur {
@@ -96,7 +156,7 @@ body {
     opacity: 0.6;
 }
 
-#game-over {
+#game-over-msg {
     font-size: 3.5em;
     color:azure;
     font-weight: 900;
@@ -107,7 +167,58 @@ body {
     z-index: 2;
     margin: 0;
     text-shadow: 4px 4px 2px rgba(0,0,0,0.6);
+}
+#welcome-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.92);
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    z-index: 2;
+}
 
+#game-over-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.613);
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#welcome-msg {
+    text-align: center;
+    font-size: 2.5em;
+    color:#ffcc33;
+    font-weight: 900;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    margin: 0;
+    text-shadow: 4px 4px 2px #382d0d;
+    position: relative;
+}
+
+#welcome-msg h1 {
+    margin: 0;
+}
+
+#skill-msg {
+    color:#ffcc33;
+    font-size: 2em;
+    text-shadow: none;
+    font-weight: 100;
+    text-align: center;
+    margin: 0.25em;
+    text-shadow: 3px 3px 2px rgba(0,0,0,0.6);
+    z-index: 2;
 }
 
 #start-btn{
@@ -125,5 +236,26 @@ body {
     
     border:2px solid black;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+}
 
+#btn-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.skill-btn {
+    margin: 2%;
+    font-size: 16px;
+    color:white;
+    padding:1em;
+    border-radius: 0.5em;
+    font-weight: 800;
+    
+    background: #D31027;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #EA384D, #D31027);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #EA384D, #D31027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+    border:2px solid black;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+    z-index: 1;
 }

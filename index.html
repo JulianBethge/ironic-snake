@@ -7,13 +7,23 @@
     <title>Ironic Snake</title>
     <link rel="stylesheet" href="./css/main.css">
 </head>
-<body>
+<body id="body">
     <div class="sides">
-        <div class="text"><h2>Score: </h2></div>
+        <div id="score-text">
+            <h2>Score: </h2>
+        </div>
+        <!-- <div id="score"></div> -->
         <div id="score"></div>
+        <div id="highscore">
+            <span id="highscore-text"></span><br>
+            <span id="highscore-storage"></span>
+
+        </div>
     </div>
     <div id="board"></div>
-    <div class="sides"></div>
+    <div class="sides">
+
+    </div>
     
     <script src="./js/main.js"></script>
 </body>

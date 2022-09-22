@@ -3,9 +3,6 @@ const columns = 24; //number of columns/ rows
 const fieldSize = Math.floor(board.offsetWidth/columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
-const level = 10; // the higher the faster does the player move: level-times per second
-const interval = 1000/level; //refresh interval for movement
-
 
 class Game {
     constructor(){
@@ -16,32 +13,105 @@ class Game {
         this.moveDirection = null;
         this.intervalId = null;
         this.keysPressed = []; // Buffer for pressed key
+        this.reset();
+    }
+
+    //welcome sequence
+    welcome(){   
+        const welcomeDiv = document.createElement('div');
+        const welcomeMessage = document.createElement('div');
+        const skillMessage = document.createElement('div');
+        const btnGroup = document.createElement('div');
+        const skillBtn1 = document.createElement("button");
+        const skillBtn2 = document.createElement("button");
+        const skillBtn3 = document.createElement("button");
+        const instructions = document.createElement('div');
+
+        welcomeDiv.id = "welcome-box";
+        welcomeMessage.id = "welcome-msg";
+        skillMessage.id = "skill-msg";
+        instructions.id ="instructions";
+        btnGroup.id = "btn-group";
+        skillBtn1.className="skill-btn";
+        skillBtn2.className="skill-btn";
+        skillBtn3.className="skill-btn";
+
+        welcomeMessage.innerHTML="<h1>Ironic Snake</h1>🐉";
+        skillMessage.innerHTML="Choose your skill to start:";
+
+        skillBtn1.innerHTML="Easy";
+        skillBtn2.innerHTML="Medium";
+        skillBtn3.innerHTML="Hard";
+        
+        instructions.innerHTML = `<h3>Instructions:</h3>
+        Control the Snake: Use the arrow keys <strong>⬅️⬆️⬇️➡️</strong> or <strong>WASD</strong><br>
+        Eat fruits to grow: 🍎<br>
+        And don't bite yourself... 🪦<br>
+        Good Luck!`
+
+        welcomeDiv.appendChild(welcomeMessage);
+        welcomeDiv.appendChild(skillMessage);
+        welcomeDiv.appendChild(btnGroup);
+        btnGroup.appendChild(skillBtn1);
+        btnGroup.appendChild(skillBtn2);
+        btnGroup.appendChild(skillBtn3);
+        welcomeDiv.appendChild(instructions);
+
+        board.appendChild(welcomeDiv);
+
+        skillBtn1.addEventListener('click', (event) => {
+            board.removeChild(welcomeDiv);
+            const level = 5; // the higher the faster does the player move: level-times per second
+            const interval = 1000/level; //refresh interval for movement
+            this.start(interval)
+        });
+        skillBtn2.addEventListener('click', (event) => {
+            board.removeChild(welcomeDiv);
+            const level = 10; 
+            const interval = 1000/level; 
+            this.start(interval)
+        });
+        skillBtn3.addEventListener('click', (event) => {
+            board.removeChild(welcomeDiv);
+            const level = 15;  
+            const interval = 1000/level; 
+            this.start(interval)
+        });
+
     }
     
-    start(){
-        
+    start(interval){
         this.snakeHead = new SnakeSegment(columns/2, columns/2);
-       
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
-
         this.attachEventListeners();
-        score.innerText = this.points;
         
-        
+        const scoreText = document.getElementById("score-text");
+        const highscoreText = document.getElementById("highscore-text");
+        const highscoreDomElement = document.getElementById("highscore-storage");
 
+        scoreText.classList.add("color");
+        score.classList.add("color");
+        highscoreText.classList.add("color");
+        highscoreDomElement.classList.add("color");
+        score.classList.add("border");
+        
+        score.innerText = this.points;
+        highscoreText.innerHTML = "🥇 Highscore:";
+        
+        if(localStorage.getItem("highscore")){
+            highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
+        }
+        
         //move snake
         this.intervalId = setInterval(() => {
 
             if(this.detectFruitCollision(this.fruit)){
                 this.points += 100;
-
                 score.innerText = this.points;
                 this.fruit.removeInstance();
                 this.fruit = new Fruit(this.random());
-
-
             }
             
             //retrieving keypressed buffer:
@@ -95,64 +165,42 @@ class Game {
             if(this.points > 100 * (columns-1)**2){
                 this.createGameOverMessage("win");
             }
-
-
         }, interval);
     }
 
     attachEventListeners(){
-        
         document.addEventListener("keydown", (event) => {
             const lastMove = this.snakeHead.lastMoves.at(-1);
 
             if (this.keysPressed.length === 0){
-                if ((lastMove === "left" || lastMove == "right") && event.key === "ArrowUp"){
+                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W") ){
                     this.keysPressed.push("up");
-                    // this.moveDirection = "up";
-                    
                 }
-                if ((lastMove === "up" || lastMove == "down") && event.key === "ArrowRight"){
-                    // this.moveDirection = "right";
-                    this.keysPressed.push("right");
-                    
+                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")){
+                    this.keysPressed.push("right");     
                 }
-                if ((lastMove === "left" || lastMove == "right") && event.key === "ArrowDown"){
-                    // this.moveDirection = "down";
+                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")){
                     this.keysPressed.push("down");
-                    
                 }
-                if ((lastMove === "up" || lastMove == "down") && event.key === "ArrowLeft"){
-                    // this.moveDirection = "left";
+                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")){
                     this.keysPressed.push("left");   
                 }
             }
 
             if (this.keysPressed.length === 1){
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && event.key === "ArrowUp"){
-                    this.keysPressed.push("up");
-                    
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W") ){
+                    this.keysPressed.push("up");   
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && event.key === "ArrowRight"){
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")){
                     this.keysPressed.push("right");
-                    
                 }
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && event.key === "ArrowDown"){
-
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S") ){
                     this.keysPressed.push("down");
-                    
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && event.key === "ArrowLeft"){
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") ){
                     this.keysPressed.push("left");   
                 }
-
             }
-   
-
-
-            
-
-
-
         });
     }
 
@@ -225,38 +273,106 @@ class Game {
     }
 
     createGameOverMessage(result){
-
         clearInterval(this.intervalId);
+        
+        if(this.points > localStorage.getItem("highscore")){
+            localStorage.setItem("highscore", this.points);
+        }
+           
         this.snake.forEach(segment => {
             segment.domElement.classList.add("blur");
-
         });
         this.fruit.domElement.classList.add("blur");
-        // board.classList.add("blur");
-        
+
+        const gameOverDiv = document.createElement('div');
         const gameOverMessage = document.createElement('div');
-        gameOverMessage.id = "game-over";
+        const skillMessage = document.createElement('div');
+        const btnGroup = document.createElement('div');
+        const skillBtn1 = document.createElement("button");
+        const skillBtn2 = document.createElement("button");
+        const skillBtn3 = document.createElement("button");
+        
+        gameOverMessage.id = "game-over-msg";
+        gameOverDiv.id = "game-over-box"
+        skillMessage.id = "skill-msg";
+        btnGroup.id = "btn-group";
+        skillBtn1.className="skill-btn";
+        skillBtn2.className="skill-btn";
+        skillBtn3.className="skill-btn";
+        skillBtn1.innerHTML="Easy";
+        skillBtn2.innerHTML="Medium";
+        skillBtn3.innerHTML="Hard";
 
         
-        // alert(`You've won! You've earned ${this.points} Points!`);
         if (result === "loss"){
             gameOverMessage.innerText="Game Over 😭";
         }
         if (result === "win"){
             gameOverMessage.innerText="You have won 🤩";
         }
-        
-        const startBtn = document.createElement("button");
-        startBtn.innerHTML="Start Again!";
-        startBtn.id="start-btn"
-        board.appendChild(gameOverMessage);
-        gameOverMessage.appendChild(startBtn);
 
-        startBtn.addEventListener('click', (event) => {
-            location.reload();
+        skillMessage.innerHTML="🐉<br>Start again:";
 
+        skillBtn1.innerHTML="Easy";
+        skillBtn2.innerHTML="Medium";
+        skillBtn3.innerHTML="Hard";
+
+        gameOverDiv.appendChild(gameOverMessage);
+        gameOverDiv.appendChild(skillMessage);
+        gameOverDiv.appendChild(btnGroup);
+        btnGroup.appendChild(skillBtn1);
+        btnGroup.appendChild(skillBtn2);
+        btnGroup.appendChild(skillBtn3);
+        board.appendChild(gameOverDiv);
+  
+        skillBtn1.addEventListener('click', (event) => {
+            board.removeChild(gameOverDiv);
+            this.snake.forEach(snakeSegment => {
+                snakeSegment.removeInstance();
+
+            });
+            this.fruit.removeInstance();
+            
+            const level = 5; // the higher the faster does the player move: level-times per second
+            const interval = 1000/level; //refresh interval for movement
+            this.reset();
+            this.start(interval)
+        });
+        skillBtn2.addEventListener('click', (event) => {
+            board.removeChild(gameOverDiv);
+            this.snake.forEach(snakeSegment => {
+                snakeSegment.removeInstance();
+
+            });
+            this.fruit.removeInstance();
+            const level = 10; 
+            const interval = 1000/level; 
+            this.reset();
+            this.start(interval)
+        });
+        skillBtn3.addEventListener('click', (event) => {
+            board.removeChild(gameOverDiv);
+            this.snake.forEach(snakeSegment => {
+                snakeSegment.removeInstance();
+
+            });
+            this.fruit.removeInstance();
+            const level = 15;  
+            const interval = 1000/level; 
+            this.reset();
+            this.start(interval)
         });
 
+    }
+
+    reset(){
+        this.snakeHead = null; 
+        this.snake = []; 
+        this.fruit = null;
+        this.points = 0;
+        this.moveDirection = null;
+        this.intervalId = null;
+        this.keysPressed = []; 
     }
 
 }
@@ -360,23 +476,32 @@ class Fruit{
 
     createDomElement(){
         this.domElement = document.createElement('div');
+        const leaf1 = document.createElement('div');
+        const leaf2 = document.createElement('div');
+        
 
         this.domElement.id = "fruit";
+        leaf1.className = "leaf-1";
+        leaf2.className = "leaf-2";
+        
+
+
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
         this.domElement.style.bottom = fieldSize * this.positionY + "px";
         this.domElement.style.left = fieldSize * this.positionX + "px";
     
         // append to the dom
-        board.appendChild(this.domElement)
+        this.domElement.appendChild(leaf1);
+        this.domElement.appendChild(leaf2);
+        board.appendChild(this.domElement);
     }
 
     removeInstance(){
         board.removeChild(this.domElement);
     }
-
 }
 
 //init
 const game = new Game();
-game.start();
+game.welcome();
