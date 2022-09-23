@@ -37,7 +37,7 @@ class Game {
         skillBtn3.className="skill-btn";
 
         welcomeMessage.innerHTML="<h1>Ironic Snake</h1>🐉";
-        skillMessage.innerHTML="Choose your skill to start:";
+        skillMessage.innerHTML="Choose difficulty level to start:";
 
         skillBtn1.innerHTML="Easy";
         skillBtn2.innerHTML="Medium";
