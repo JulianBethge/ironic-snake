@@ -260,10 +260,8 @@ class Game {
 
          // get all coordinates of the snake to exclude them from possible fruit spawn places
         this.snake.forEach(part => {    
-            const coordinates = [];
-            coordinates.push(part.positionX);
-            coordinates.push(part.positionY);
-            snakeSquares.push(coordinates);
+            snakeSquares.push(part.position);
+            console.log(part.position);
         });
 
         // get all free squares (where the snake is not)
@@ -442,6 +440,7 @@ class SnakeSegment {
         }
         this.updateDom("y");
         this.updateLastMoves("down");
+        this.updateCoordinates();
     }
 
     moveLeft(){
@@ -452,6 +451,7 @@ class SnakeSegment {
         }
         this.updateDom("x");
         this.updateLastMoves("left");
+        this.updateCoordinates();
     }
 
     updateDom(axis){
