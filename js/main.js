@@ -96,6 +96,7 @@ class Game {
         highscoreText.classList.add("color");
         highscoreDomElement.classList.add("color");
         score.classList.add("border");
+        board.classList.add("gradient-border");
         
         score.innerText = this.points;
         highscoreText.innerHTML = "🥇 Highscore:";
@@ -283,6 +284,8 @@ class Game {
             segment.domElement.classList.add("blur");
         });
         this.fruit.domElement.classList.add("blur");
+
+        // board.classList.remove("gradient-border");
 
         const gameOverDiv = document.createElement('div');
         const gameOverMessage = document.createElement('div');
