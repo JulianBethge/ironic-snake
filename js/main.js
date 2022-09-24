@@ -13,7 +13,7 @@ class Game {
         this.moveDirection = null;
         this.intervalId = null;
         this.keysPressed = []; // Buffer for pressed key
-        this.reset();
+        this.gameBoard = null;
     }
 
     //welcome sequence
@@ -81,6 +81,7 @@ class Game {
     }
     
     start(interval){
+        this.gameBoard = new Board(columns);
         this.snakeHead = new SnakeSegment(columns/2, columns/2);
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
@@ -285,7 +286,6 @@ class Game {
         });
         this.fruit.domElement.classList.add("blur");
 
-        // board.classList.remove("gradient-border");
 
         const gameOverDiv = document.createElement('div');
         const gameOverMessage = document.createElement('div');
@@ -418,8 +418,6 @@ class SnakeSegment {
         this.updateDom("y");
         this.updateLastMoves("up");
         this.updateCoordinates();
-        
-        
     }
 
     moveRight(){
@@ -527,6 +525,21 @@ class Fruit{
 
     removeInstance(){
         board.removeChild(this.domElement);
+    }
+}
+
+class Board{
+    constructor(columns){
+        this.squares = []; // all coordinates of the board in an array 
+        this.setSquares(columns);
+    }
+
+    setSquares(columns){
+        for(let i = 0; i < columns; i++){
+            for(let j = 0; j < columns; j++ ){
+                this.squares.push([i,j]);
+            }
+        }
     }
 }
 
