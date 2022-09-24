@@ -1,7 +1,6 @@
 # Ironic Snake 🐉 
 
 ### The classic video game in a new look
-
 A 2D game for the browser. Snake is a video game genre where the player maneuvers a growing line that becomes a primary obstacle to itself.
 
 **Demo: [Play the Game!](https://julianbrandon.github.io/ironic-snake/)**
@@ -17,7 +16,6 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
 ![Screenshot](./images/screen.jpg)
 
 ### Instructions
-
 Control the Snake: Use the arrow keys ⬅️⬆️⬇️➡️ or **WASD**
 Eat fruits to grow: 🍎
 And don't bite yourself... 🪦
@@ -26,5 +24,5 @@ Good Luck!
 ### About the Author
 Julian Bethge  
 Homebase: Berlin  
-Full Stack Web Developer (remote)  
-Bachelor of Science Media Informatics
+Full Stack Web Developer (Remote)  
+Bachelor of Science in Media Informatics
