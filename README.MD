@@ -6,15 +6,15 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
 
 **Demo: [Play the Game!](https://julianbrandon.github.io/ironic-snake/)**
 
-### Features
+### Facts & Features
+- Player can go through walls
 - Score Display
 - Highscore (local)
 - Three difficulty levels
+- Written in JS, CSS and HTML
 
-### Screenshots
-
+### Screenshot
 ![Screenshot](./images/screen.jpg)
-![start screen](./images/start.jpg)
 
 ### Instructions
 
@@ -22,12 +22,6 @@ Control the Snake: Use the arrow keys ⬅️⬆️⬇️➡️ or **WASD**
 Eat fruits to grow: 🍎
 And don't bite yourself... 🪦
 Good Luck!
-
-### Technologys used
-- HTML
-- Javascript
-- CSS
-
 
 ### About the Author
 Julian Bethge
