@@ -27,7 +27,4 @@ Good Luck!
 Julian Bethge  
 Homebase: Berlin  
 Full Stack Web Developer (remote)  
-Bachelor of Science Media Informatics  
-Contact: <julbethge@gmail.com>  
-LinkedIn: *coming soon*
-
+Bachelor of Science Media Informatics

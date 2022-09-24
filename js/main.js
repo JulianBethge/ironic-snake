@@ -14,6 +14,7 @@ class Game {
         this.intervalId = null;
         this.keysPressed = []; // Buffer for pressed key
         this.gameBoard = null;
+        this.squares = null;
     }
 
     //welcome sequence
@@ -82,6 +83,7 @@ class Game {
     
     start(interval){
         this.gameBoard = new Board(columns);
+        this.squares = this.gameBoard.getSquares();
         this.snakeHead = new SnakeSegment(columns/2, columns/2);
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
@@ -108,6 +110,8 @@ class Game {
         
         //move snake
         this.intervalId = setInterval(() => {
+
+
 
             if(this.detectFruitCollision(this.fruit)){
                 this.points += 100;
@@ -160,13 +164,15 @@ class Game {
                 }
             }
 
+            if(this.points > (100 * (columns**2)) - 300 ){
+                this.createGameOverMessage("win");
+            }
+
             if(this.detectSnakeCollision(this.snake)){
                 this.createGameOverMessage("loss");
             }
 
-            if(this.points > 100 * (columns-1)**2){
-                this.createGameOverMessage("win");
-            }
+
         }, interval);
     }
 
@@ -243,34 +249,31 @@ class Game {
     }
 
     random(){
-        let result = [];
-        const snakeArr = [];
+        let snakeSquares = []; // occupied squares by the snake
+        const allSquares = this.squares; // all squares
+        let result = null;
+    
 
         const includesMultiDimension = (arr, res) =>
         JSON.stringify(arr).includes(JSON.stringify(res));
 
 
          // get all coordinates of the snake to exclude them from possible fruit spawn places
-        this.snake.forEach(part => {
+        this.snake.forEach(part => {    
             const coordinates = [];
             coordinates.push(part.positionX);
             coordinates.push(part.positionY);
-            snakeArr.push(coordinates);  
+            snakeSquares.push(coordinates);
         });
 
-        // test if the random coordinates are hidden by snake body, 
-        // if yes, it generates new random numbers.
-        while(true){ 
-            result = [];
-            let x = Math.floor(Math.random() * (columns - 0));
-            let y = Math.floor(Math.random() * (columns - 0));
-            result.push(x);
-            result.push(y);
-            
-            if (!includesMultiDimension(snakeArr, result)){
-                break; 
-            }
-        }
+        // get all free squares (where the snake is not)
+        const freeSquares = allSquares.filter(square => {
+            return !includesMultiDimension(snakeSquares, square);
+        });
+
+        // get a random free square
+        result = freeSquares[Math.floor(Math.random()*freeSquares.length)];
+
         return result;
     }
 
@@ -510,8 +513,6 @@ class Fruit{
         leaf1.className = "leaf-1";
         leaf2.className = "leaf-2";
         
-
-
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
         this.domElement.style.bottom = fieldSize * this.positionY + "px";
@@ -540,6 +541,10 @@ class Board{
                 this.squares.push([i,j]);
             }
         }
+    }
+
+    getSquares(){
+        return this.squares;
     }
 }
 
