@@ -24,10 +24,10 @@ And don't bite yourself... 🪦
 Good Luck!
 
 ### About the Author
-Julian Bethge
-Homebase: Berlin
-Full Stack Web Developer (remote)
-Bachelor of Science Media Informatics
-Contact: <julbethge@gmail.com>
+Julian Bethge  
+Homebase: Berlin  
+Full Stack Web Developer (remote)  
+Bachelor of Science Media Informatics  
+Contact: <julbethge@gmail.com>  
 LinkedIn: *coming soon*
 
