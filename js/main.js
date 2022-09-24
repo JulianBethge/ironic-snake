@@ -386,6 +386,7 @@ class SnakeSegment {
         this.height = fieldSize;
         this.positionX = positionX;
         this.positionY =  positionY;
+        this.position = [this.positionX, this.positionY];
         this.domElement = null;
         this.createDomElement();
         this.lastMoves = []; // store the last moves
@@ -406,30 +407,19 @@ class SnakeSegment {
         board.appendChild(this.domElement)
     }
 
+   
+    
     moveUp(){
         if (this.positionY < columns - 1) {
             this.positionY += 1;
         } else {
             this.positionY = 0;
         }
-        this.domElement.style.bottom = this.positionY * fieldSize + "px";
-        this.lastMoves.push("up");
-        if(this.lastMoves.length>2){
-            this.lastMoves.shift();
-        }
-    }
-
-    moveDown(){
-        if (this.positionY > 0) {
-            this.positionY -= 1;
-        } else {
-            this.positionY = columns-1;
-        }
-        this.domElement.style.bottom = this.positionY * fieldSize + "px";
-        this.lastMoves.push("down");
-        if(this.lastMoves.length>2){
-            this.lastMoves.shift();
-        }
+        this.updateDom("y");
+        this.updateLastMoves("up");
+        this.updateCoordinates();
+        
+        
     }
 
     moveRight(){
@@ -438,11 +428,19 @@ class SnakeSegment {
         } else {
             this.positionX = 0;
         }
-        this.domElement.style.left = this.positionX * fieldSize + "px";
-        this.lastMoves.push("right");
-        if(this.lastMoves.length>2){
-            this.lastMoves.shift();
+        this.updateDom("x");
+        this.updateLastMoves("right");
+        this.updateCoordinates();
+    }
+
+    moveDown(){
+        if (this.positionY > 0) {
+            this.positionY -= 1;
+        } else {
+            this.positionY = columns-1;
         }
+        this.updateDom("y");
+        this.updateLastMoves("down");
     }
 
     moveLeft(){
@@ -451,11 +449,38 @@ class SnakeSegment {
         } else {
             this.positionX = columns - 1;
         }
-        this.domElement.style.left = this.positionX * fieldSize + "px";
-        this.lastMoves.push("left");
+        this.updateDom("x");
+        this.updateLastMoves("left");
+    }
+
+    updateDom(axis){
+        if(axis == "x"){
+            this.domElement.style.left = this.positionX * fieldSize + "px";
+        }
+        if(axis == "y"){
+            this.domElement.style.bottom = this.positionY * fieldSize + "px";
+        }
+    }
+
+    updateLastMoves(direction){
+        switch(direction){
+            case "up": this.lastMoves.push("up");
+            break;
+            case "right": this.lastMoves.push("right");
+            break;
+            case "down": this.lastMoves.push("down");
+            break;
+            case "left": this.lastMoves.push("left");
+            break;
+        }
+        
         if(this.lastMoves.length>2){
             this.lastMoves.shift();
         }
+    }
+
+    updateCoordinates(){
+        this.position = [this.positionX, this.positionY];
     }
 
     removeInstance(){
