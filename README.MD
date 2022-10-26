@@ -3,7 +3,7 @@
 ### The classic video game in a new look
 A 2D game for the browser. Snake is a video game genre where the player maneuvers a growing line that becomes a primary obstacle to itself.
 
-**Demo: [Play the Game!](https://julianbrandon.github.io/ironic-snake/)**
+**Demo: [Play the Game!](https://julianbethge.github.io/ironic-snake/)**
 
 ### Facts & Features
 - Player can go through walls
