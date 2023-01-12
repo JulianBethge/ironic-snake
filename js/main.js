@@ -1,11 +1,11 @@
 //game constants
 const columns = 24; //number of columns/ rows
-const fieldSize = Math.floor(board.offsetWidth/columns);
+const fieldSize = Math.floor(board.offsetWidth / columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
 
 class Game {
-    constructor(){
+    constructor() {
         this.snakeHead = null; // will be the first SnakeSegment
         this.snake = []; // will be an array of SnakeSegments
         this.fruit = null;
@@ -18,7 +18,7 @@ class Game {
     }
 
     //welcome sequence
-    welcome(){   
+    welcome() {
         const welcomeDiv = document.createElement('div');
         const welcomeMessage = document.createElement('div');
         const skillMessage = document.createElement('div');
@@ -31,19 +31,19 @@ class Game {
         welcomeDiv.id = "welcome-box";
         welcomeMessage.id = "welcome-msg";
         skillMessage.id = "skill-msg";
-        instructions.id ="instructions";
+        instructions.id = "instructions";
         btnGroup.id = "btn-group";
-        skillBtn1.className="skill-btn";
-        skillBtn2.className="skill-btn";
-        skillBtn3.className="skill-btn";
+        skillBtn1.className = "skill-btn";
+        skillBtn2.className = "skill-btn";
+        skillBtn3.className = "skill-btn";
 
-        welcomeMessage.innerHTML="<h1>Ironic Snake</h1>🐉";
-        skillMessage.innerHTML="Choose difficulty level to start:";
+        welcomeMessage.innerHTML = "<h1>Ironic Snake</h1>🐉";
+        skillMessage.innerHTML = "Choose difficulty level to start:";
 
-        skillBtn1.innerHTML="Easy";
-        skillBtn2.innerHTML="Medium";
-        skillBtn3.innerHTML="Hard";
-        
+        skillBtn1.innerHTML = "Easy";
+        skillBtn2.innerHTML = "Medium";
+        skillBtn3.innerHTML = "Hard";
+
         instructions.innerHTML = `<h3>Instructions:</h3>
         Control the Snake: Use the arrow keys <strong>⬅️⬆️⬇️➡️</strong> or <strong>WASD</strong><br>
         Eat fruits to grow: 🍎<br>
@@ -63,33 +63,33 @@ class Game {
         skillBtn1.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
             const level = 5; // the higher the faster does the player move: level-times per second
-            const interval = 1000/level; //refresh interval for movement
+            const interval = 1000 / level; //refresh interval for movement
             this.start(interval)
         });
         skillBtn2.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
-            const level = 10; 
-            const interval = 1000/level; 
+            const level = 10;
+            const interval = 1000 / level;
             this.start(interval)
         });
         skillBtn3.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
-            const level = 15;  
-            const interval = 1000/level; 
+            const level = 15;
+            const interval = 1000 / level;
             this.start(interval)
         });
 
     }
-    
-    start(interval){
+
+    start(interval) {
         this.gameBoard = new Board(columns);
         this.squares = this.gameBoard.getSquares();
-        this.snakeHead = new SnakeSegment(columns/2, columns/2);
+        this.snakeHead = new SnakeSegment(columns / 2, columns / 2);
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
         this.attachEventListeners();
-        
+
         const scoreText = document.getElementById("score-text");
         const highscoreText = document.getElementById("highscore-text");
         const highscoreDomElement = document.getElementById("highscore-storage");
@@ -100,39 +100,39 @@ class Game {
         highscoreDomElement.classList.add("color");
         score.classList.add("border");
         board.classList.add("gradient-border");
-        
+
         score.innerText = this.points;
         highscoreText.innerHTML = "🥇 Highscore:";
-        
-        if(localStorage.getItem("highscore")){
+
+        if (localStorage.getItem("highscore")) {
             highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
         }
-        
+
         //move snake
         this.intervalId = setInterval(() => {
 
 
 
-            if(this.detectFruitCollision(this.fruit)){
+            if (this.detectFruitCollision(this.fruit)) {
                 this.points += 100;
                 score.innerText = this.points;
                 this.fruit.removeInstance();
                 this.fruit = new Fruit(this.random());
             }
-            
+
             //retrieving keypressed buffer:
-            if (this.keysPressed.length>0){
+            if (this.keysPressed.length > 0) {
                 this.moveDirection = this.keysPressed[0];
-                this.keysPressed.shift();  
+                this.keysPressed.shift();
             }
-            
-            
+
+
             // Iteration through the complete snake array:
-            for(let i=0; i<this.snake.length; i++){
+            for (let i = 0; i < this.snake.length; i++) {
 
                 // The movement of the snake's head:
-                if (i==0){
-                    switch(this.moveDirection){
+                if (i == 0) {
+                    switch (this.moveDirection) {
                         case "up": this.snakeHead.moveUp();
                             break;
                         case "right": this.snakeHead.moveRight();
@@ -146,11 +146,11 @@ class Game {
                 }
 
                 // The Movement of the snake's body (if there is one):
-                if(this.snake.length > 1){
+                if (this.snake.length > 1) {
                     //get the second last move of the preceding snake segment:
-                    const secondLastMove = this.snake[i-1].lastMoves.at(-2);  
+                    const secondLastMove = this.snake[i - 1].lastMoves.at(-2);
                     const currentSnakeSegment = this.snake[i];
-                    switch(secondLastMove){
+                    switch (secondLastMove) {
                         case "up": currentSnakeSegment.moveUp();
                             break;
                         case "right": currentSnakeSegment.moveRight();
@@ -164,11 +164,11 @@ class Game {
                 }
             }
 
-            if(this.points > (100 * (columns**2)) - 300 ){
+            if (this.points > (100 * (columns ** 2)) - 300) {
                 this.createGameOverMessage("win");
             }
 
-            if(this.detectSnakeCollision(this.snake)){
+            if (this.detectSnakeCollision(this.snake)) {
                 this.createGameOverMessage("loss");
             }
 
@@ -176,90 +176,90 @@ class Game {
         }, interval);
     }
 
-    attachEventListeners(){
+    attachEventListeners() {
         document.addEventListener("keydown", (event) => {
             const lastMove = this.snakeHead.lastMoves.at(-1);
 
-            if (this.keysPressed.length === 0){
-                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W") ){
+            if (this.keysPressed.length === 0) {
+                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W")) {
                     this.keysPressed.push("up");
                 }
-                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")){
-                    this.keysPressed.push("right");     
+                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")) {
+                    this.keysPressed.push("right");
                 }
-                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")){
+                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")) {
                     this.keysPressed.push("down");
                 }
-                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")){
-                    this.keysPressed.push("left");   
+                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")) {
+                    this.keysPressed.push("left");
                 }
             }
 
-            if (this.keysPressed.length === 1){
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W") ){
-                    this.keysPressed.push("up");   
+            if (this.keysPressed.length === 1) {
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W")) {
+                    this.keysPressed.push("up");
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")){
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")) {
                     this.keysPressed.push("right");
                 }
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S") ){
+                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")) {
                     this.keysPressed.push("down");
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") ){
-                    this.keysPressed.push("left");   
+                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")) {
+                    this.keysPressed.push("left");
                 }
             }
         });
     }
 
-    detectFruitCollision(fruit){
-        if (this.snakeHead.positionX === fruit.positionX && 
-            this.snakeHead.positionY === fruit.positionY) {    
+    detectFruitCollision(fruit) {
+        if (this.snakeHead.positionX === fruit.positionX &&
+            this.snakeHead.positionY === fruit.positionY) {
             this.createSegment(this.snake.at(-1));
             return true;
         }
     }
 
-    detectSnakeCollision(snakeBody){
+    detectSnakeCollision(snakeBody) {
         let hasCollided = false;
-        
-        const head = snakeBody.slice(0,1);
+
+        const head = snakeBody.slice(0, 1);
         const body = snakeBody.slice(1);
 
         body.forEach((currentSnakeSegment) => {
-            if (head[0].positionX === currentSnakeSegment.positionX && 
-                head[0].positionY === currentSnakeSegment.positionY) {    
-                  hasCollided = true;
+            if (head[0].positionX === currentSnakeSegment.positionX &&
+                head[0].positionY === currentSnakeSegment.positionY) {
+                hasCollided = true;
             }
         });
         return hasCollided;
     }
 
-    createSegment(lastSnakeSegment){
+    createSegment(lastSnakeSegment) {
         let x = lastSnakeSegment.positionX;
-        let y  = lastSnakeSegment.positionY;
+        let y = lastSnakeSegment.positionY;
 
-        if(lastSnakeSegment.lastMoves.at(-1) === "up"){y--;}
-        if(lastSnakeSegment.lastMoves.at(-1) === "right"){x--;}
-        if(lastSnakeSegment.lastMoves.at(-1) === "down"){y++;}
-        if(lastSnakeSegment.lastMoves.at(-1) === "left"){x++;}
-        
+        if (lastSnakeSegment.lastMoves.at(-1) === "up") { y--; }
+        if (lastSnakeSegment.lastMoves.at(-1) === "right") { x--; }
+        if (lastSnakeSegment.lastMoves.at(-1) === "down") { y++; }
+        if (lastSnakeSegment.lastMoves.at(-1) === "left") { x++; }
+
         const sb = new SnakeSegment(x, y);
         this.snake.push(sb);
     }
 
-    random(){
+    random() {
         let snakeSquares = []; // occupied squares by the snake
         const allSquares = this.squares; // all squares
         let result = null;
-    
+
 
         const includesMultiDimension = (arr, res) =>
-        JSON.stringify(arr).includes(JSON.stringify(res));
+            JSON.stringify(arr).includes(JSON.stringify(res));
 
 
-         // get all coordinates of the snake to exclude them from possible fruit spawn places
-        this.snake.forEach(part => {    
+        // get all coordinates of the snake to exclude them from possible fruit spawn places
+        this.snake.forEach(part => {
             snakeSquares.push(part.position);
             console.log(part.position);
         });
@@ -270,18 +270,18 @@ class Game {
         });
 
         // get a random free square
-        result = freeSquares[Math.floor(Math.random()*freeSquares.length)];
+        result = freeSquares[Math.floor(Math.random() * freeSquares.length)];
 
         return result;
     }
 
-    createGameOverMessage(result){
+    createGameOverMessage(result) {
         clearInterval(this.intervalId);
-        
-        if(this.points > localStorage.getItem("highscore")){
+
+        if (this.points > localStorage.getItem("highscore")) {
             localStorage.setItem("highscore", this.points);
         }
-           
+
         this.snake.forEach(segment => {
             segment.domElement.classList.add("blur");
         });
@@ -295,31 +295,31 @@ class Game {
         const skillBtn1 = document.createElement("button");
         const skillBtn2 = document.createElement("button");
         const skillBtn3 = document.createElement("button");
-        
+
         gameOverMessage.id = "game-over-msg";
         gameOverDiv.id = "game-over-box"
         skillMessage.id = "skill-msg";
         btnGroup.id = "btn-group";
-        skillBtn1.className="skill-btn";
-        skillBtn2.className="skill-btn";
-        skillBtn3.className="skill-btn";
-        skillBtn1.innerHTML="Easy";
-        skillBtn2.innerHTML="Medium";
-        skillBtn3.innerHTML="Hard";
+        skillBtn1.className = "skill-btn";
+        skillBtn2.className = "skill-btn";
+        skillBtn3.className = "skill-btn";
+        skillBtn1.innerHTML = "Easy";
+        skillBtn2.innerHTML = "Medium";
+        skillBtn3.innerHTML = "Hard";
 
-        
-        if (result === "loss"){
-            gameOverMessage.innerText="Game Over 😭";
+
+        if (result === "loss") {
+            gameOverMessage.innerText = "Game Over 😭";
         }
-        if (result === "win"){
-            gameOverMessage.innerText="You have won 🤩";
+        if (result === "win") {
+            gameOverMessage.innerText = "You have won 🤩";
         }
 
-        skillMessage.innerHTML="🐉<br>Start again:";
+        skillMessage.innerHTML = "🐉<br>Start again:";
 
-        skillBtn1.innerHTML="Easy";
-        skillBtn2.innerHTML="Medium";
-        skillBtn3.innerHTML="Hard";
+        skillBtn1.innerHTML = "Easy";
+        skillBtn2.innerHTML = "Medium";
+        skillBtn3.innerHTML = "Hard";
 
         gameOverDiv.appendChild(gameOverMessage);
         gameOverDiv.appendChild(skillMessage);
@@ -328,7 +328,7 @@ class Game {
         btnGroup.appendChild(skillBtn2);
         btnGroup.appendChild(skillBtn3);
         board.appendChild(gameOverDiv);
-  
+
         skillBtn1.addEventListener('click', (event) => {
             board.removeChild(gameOverDiv);
             this.snake.forEach(snakeSegment => {
@@ -336,9 +336,9 @@ class Game {
 
             });
             this.fruit.removeInstance();
-            
+
             const level = 5; // the higher the faster does the player move: level-times per second
-            const interval = 1000/level; //refresh interval for movement
+            const interval = 1000 / level; //refresh interval for movement
             this.reset();
             this.start(interval)
         });
@@ -349,8 +349,8 @@ class Game {
 
             });
             this.fruit.removeInstance();
-            const level = 10; 
-            const interval = 1000/level; 
+            const level = 10;
+            const interval = 1000 / level;
             this.reset();
             this.start(interval)
         });
@@ -361,32 +361,32 @@ class Game {
 
             });
             this.fruit.removeInstance();
-            const level = 15;  
-            const interval = 1000/level; 
+            const level = 15;
+            const interval = 1000 / level;
             this.reset();
             this.start(interval)
         });
 
     }
 
-    reset(){
-        this.snakeHead = null; 
-        this.snake = []; 
+    reset() {
+        this.snakeHead = null;
+        this.snake = [];
         this.fruit = null;
         this.points = 0;
         this.moveDirection = null;
         this.intervalId = null;
-        this.keysPressed = []; 
+        this.keysPressed = [];
     }
 
 }
 
 class SnakeSegment {
-    constructor(positionX, positionY){
+    constructor(positionX, positionY) {
         this.width = fieldSize;
         this.height = fieldSize;
         this.positionX = positionX;
-        this.positionY =  positionY;
+        this.positionY = positionY;
         this.position = [this.positionX, this.positionY];
         this.domElement = null;
         this.createDomElement();
@@ -394,7 +394,7 @@ class SnakeSegment {
 
     }
 
-    createDomElement(){
+    createDomElement() {
         this.domElement = document.createElement('div');
 
         this.domElement.className = "snake";
@@ -402,15 +402,15 @@ class SnakeSegment {
         this.domElement.style.height = this.height + "px";
         this.domElement.style.left = this.positionX * fieldSize + "px";
         this.domElement.style.bottom = this.positionY * fieldSize + "px";
-        
+
         // append to the dom
         // const board = document.getElementById("board");
         board.appendChild(this.domElement)
     }
 
-   
-    
-    moveUp(){
+
+
+    moveUp() {
         if (this.positionY < columns - 1) {
             this.positionY += 1;
         } else {
@@ -421,7 +421,7 @@ class SnakeSegment {
         this.updateCoordinates();
     }
 
-    moveRight(){
+    moveRight() {
         if (this.positionX < columns - 1) {
             this.positionX += 1;
         } else {
@@ -432,18 +432,18 @@ class SnakeSegment {
         this.updateCoordinates();
     }
 
-    moveDown(){
+    moveDown() {
         if (this.positionY > 0) {
             this.positionY -= 1;
         } else {
-            this.positionY = columns-1;
+            this.positionY = columns - 1;
         }
         this.updateDom("y");
         this.updateLastMoves("down");
         this.updateCoordinates();
     }
 
-    moveLeft(){
+    moveLeft() {
         if (this.positionX > 0) {
             this.positionX -= 1;
         } else {
@@ -454,96 +454,96 @@ class SnakeSegment {
         this.updateCoordinates();
     }
 
-    updateDom(axis){
-        if(axis == "x"){
+    updateDom(axis) {
+        if (axis == "x") {
             this.domElement.style.left = this.positionX * fieldSize + "px";
         }
-        if(axis == "y"){
+        if (axis == "y") {
             this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
     }
 
-    updateLastMoves(direction){
-        switch(direction){
+    updateLastMoves(direction) {
+        switch (direction) {
             case "up": this.lastMoves.push("up");
-            break;
+                break;
             case "right": this.lastMoves.push("right");
-            break;
+                break;
             case "down": this.lastMoves.push("down");
-            break;
+                break;
             case "left": this.lastMoves.push("left");
-            break;
+                break;
         }
-        
-        if(this.lastMoves.length>2){
+
+        if (this.lastMoves.length > 2) {
             this.lastMoves.shift();
         }
     }
 
-    updateCoordinates(){
+    updateCoordinates() {
         this.position = [this.positionX, this.positionY];
     }
 
-    removeInstance(){
+    removeInstance() {
         board.removeChild(this.domElement);
     }
 
 }
 
-class Fruit{
-    constructor(randomArr){
+class Fruit {
+    constructor(randomArr) {
         this.width = fieldSize;
         this.height = fieldSize;
 
-        this.positionX =  randomArr[0];
-        this.positionY =  randomArr[1];
-        
+        this.positionX = randomArr[0];
+        this.positionY = randomArr[1];
+
         this.domElement = null;
 
         this.createDomElement();
     }
 
-    createDomElement(){
+    createDomElement() {
         this.domElement = document.createElement('div');
         const leaf1 = document.createElement('div');
         const leaf2 = document.createElement('div');
-        
+
 
         this.domElement.id = "fruit";
         leaf1.className = "leaf-1";
         leaf2.className = "leaf-2";
-        
+
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
         this.domElement.style.bottom = fieldSize * this.positionY + "px";
         this.domElement.style.left = fieldSize * this.positionX + "px";
-    
+
         // append to the dom
         this.domElement.appendChild(leaf1);
         this.domElement.appendChild(leaf2);
         board.appendChild(this.domElement);
     }
 
-    removeInstance(){
+    removeInstance() {
         board.removeChild(this.domElement);
     }
 }
 
-class Board{
-    constructor(columns){
+class Board {
+    constructor(columns) {
         this.squares = []; // all coordinates of the board in an array 
         this.setSquares(columns);
     }
 
-    setSquares(columns){
-        for(let i = 0; i < columns; i++){
-            for(let j = 0; j < columns; j++ ){
-                this.squares.push([i,j]);
+    setSquares(columns) {
+        for (let i = 0; i < columns; i++) {
+            for (let j = 0; j < columns; j++) {
+                this.squares.push([i, j]);
             }
         }
     }
 
-    getSquares(){
+    getSquares() {
         return this.squares;
     }
 }
