@@ -249,30 +249,23 @@ class Game {
     }
 
     random() {
-        let snakeSquares = []; // occupied squares by the snake
-        const allSquares = this.squares; // all squares
-        let result = null;
+        // Get all coordinates of the snake to exclude them from possible fruit spawn places
+        const snakeSquares = this.snake.map(part => part.position);
 
-
-        const includesMultiDimension = (arr, res) =>
-            JSON.stringify(arr).includes(JSON.stringify(res));
-
-
-        // get all coordinates of the snake to exclude them from possible fruit spawn places
-        this.snake.forEach(part => {
-            snakeSquares.push(part.position);
-            console.log(part.position);
+        // Get all free squares (where the snake is not)
+        const freeSquares = this.squares.filter(square => {
+            let isFree = true;
+            for (let i = 0; i < snakeSquares.length; i++) {
+                if (snakeSquares[i][0] == square[0] && snakeSquares[i][1] == square[1]) {
+                    isFree = false;
+                    break;
+                }
+            }
+            return isFree;
         });
 
-        // get all free squares (where the snake is not)
-        const freeSquares = allSquares.filter(square => {
-            return !includesMultiDimension(snakeSquares, square);
-        });
-
-        // get a random free square
-        result = freeSquares[Math.floor(Math.random() * freeSquares.length)];
-
-        return result;
+        // Get a random free square
+        return freeSquares[Math.floor(Math.random() * freeSquares.length)];
     }
 
     createGameOverMessage(result) {
