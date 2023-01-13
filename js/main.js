@@ -19,46 +19,11 @@ class Game {
 
     //welcome sequence
     welcome() {
-        const welcomeDiv = document.createElement('div');
-        const welcomeMessage = document.createElement('div');
-        const skillMessage = document.createElement('div');
-        const btnGroup = document.createElement('div');
-        const skillBtn1 = document.createElement("button");
-        const skillBtn2 = document.createElement("button");
-        const skillBtn3 = document.createElement("button");
-        const instructions = document.createElement('div');
-
-        welcomeDiv.id = "welcome-box";
-        welcomeMessage.id = "welcome-msg";
-        skillMessage.id = "skill-msg";
-        instructions.id = "instructions";
-        btnGroup.id = "btn-group";
-        skillBtn1.className = "skill-btn";
-        skillBtn2.className = "skill-btn";
-        skillBtn3.className = "skill-btn";
-
-        welcomeMessage.innerHTML = "<h1>Ironic Snake</h1>🐉";
-        skillMessage.innerHTML = "Choose difficulty level to start:";
-
-        skillBtn1.innerHTML = "Easy";
-        skillBtn2.innerHTML = "Medium";
-        skillBtn3.innerHTML = "Hard";
-
-        instructions.innerHTML = `<h3>Instructions:</h3>
-        Control the Snake: Use the arrow keys <strong>⬅️⬆️⬇️➡️</strong> or <strong>WASD</strong><br>
-        Eat fruits to grow: 🍎<br>
-        And don't bite yourself... 🪦<br>
-        Good Luck!`
-
-        welcomeDiv.appendChild(welcomeMessage);
-        welcomeDiv.appendChild(skillMessage);
-        welcomeDiv.appendChild(btnGroup);
-        btnGroup.appendChild(skillBtn1);
-        btnGroup.appendChild(skillBtn2);
-        btnGroup.appendChild(skillBtn3);
-        welcomeDiv.appendChild(instructions);
-
-        board.appendChild(welcomeDiv);
+        const board = document.getElementById("board");
+        const welcomeDiv = document.getElementById('welcome-box');
+        const skillBtn1 = document.getElementById("skill-btn-1");
+        const skillBtn2 = document.getElementById("skill-btn-2");
+        const skillBtn3 = document.getElementById("skill-btn-3");
 
         skillBtn1.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
@@ -66,19 +31,20 @@ class Game {
             const interval = 1000 / level; //refresh interval for movement
             this.start(interval)
         });
+
         skillBtn2.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
             const level = 10;
             const interval = 1000 / level;
             this.start(interval)
         });
+
         skillBtn3.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
             const level = 15;
             const interval = 1000 / level;
             this.start(interval)
         });
-
     }
 
     start(interval) {
@@ -111,8 +77,6 @@ class Game {
         //move snake
         this.intervalId = setInterval(() => {
 
-
-
             if (this.detectFruitCollision(this.fruit)) {
                 this.points += 100;
                 score.innerText = this.points;
@@ -125,7 +89,6 @@ class Game {
                 this.moveDirection = this.keysPressed[0];
                 this.keysPressed.shift();
             }
-
 
             // Iteration through the complete snake array:
             for (let i = 0; i < this.snake.length; i++) {

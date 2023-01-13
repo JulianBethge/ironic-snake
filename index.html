@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ironic Snake</title>
-    <link rel="stylesheet" href="./css/main.css">
-</head>
-<body id="body">
+    <link rel="stylesheet" href="./css/main.css" />
+  </head>
+  <body id="body">
     <div class="sides">
-        <div id="score-text">
-            <h2>Score: </h2>
-        </div>
-        <!-- <div id="score"></div> -->
-        <div id="score"></div>
-        <div id="highscore">
-            <span id="highscore-text"></span><br>
-            <span id="highscore-storage"></span>
-
-        </div>
+      <div id="score-text">
+        <h2>Score:</h2>
+      </div>
+      <div id="score"></div>
+      <div id="highscore">
+        <span id="highscore-text"></span><br />
+        <span id="highscore-storage"></span>
+      </div>
     </div>
-    <div id="board"></div>
-    <div class="sides">
-
+    <div id="board">
+      <div id="welcome-box">
+        <div id="welcome-msg">
+          <h1>Ironic Snake</h1>
+          🐉
+        </div>
+        <div id="skill-msg">Choose difficulty level to start:</div>
+        <div id="btn-group">
+          <button class="skill-btn" id="skill-btn-1">Easy</button>
+          <button class="skill-btn" id="skill-btn-2">Medium</button>
+          <button class="skill-btn" id="skill-btn-3">Hard</button>
+        </div>
+        <div id="instructions">
+          <h3>Instructions:</h3>
+          Control the Snake: Use the arrow keys <strong>⬅️⬆️⬇️➡️</strong> or
+          <strong>WASD</strong><br />
+          Eat fruits to grow: 🍎<br />
+          And don't bite yourself... 🪦<br />
+          Good Luck!
+        </div>
+      </div>
     </div>
-    
+    <div class="sides"></div>
+
     <script src="./js/main.js"></script>
-</body>
+  </body>
 </html>
