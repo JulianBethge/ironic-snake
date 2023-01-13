@@ -6,13 +6,13 @@ board.style.height = fieldSize * columns + "px";
 
 class Game {
     constructor() {
-        this.snakeHead = null; // will be the first SnakeSegment
-        this.snake = []; // will be an array of SnakeSegments
+        this.snakeHead = null; //  the first segment of the snake, the head, which the player can control
+        this.snake = []; // the array of all snake segments
         this.fruit = null;
         this.points = 0;
         this.moveDirection = null;
         this.intervalId = null;
-        this.keysPressed = []; // Buffer for pressed key
+        this.keysPressed = []; // a buffer for pressed keys for better movement control
         this.gameBoard = null;
         this.squares = null;
     }
@@ -145,7 +145,7 @@ class Game {
                     continue;
                 }
 
-                // The Movement of the snake's body (if there is one):
+                // The movement of the snake's body (if there is one):
                 if (this.snake.length > 1) {
                     //get the second last move of the preceding snake segment:
                     const secondLastMove = this.snake[i - 1].lastMoves.at(-2);
