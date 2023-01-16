@@ -134,8 +134,6 @@ class Game {
             if (this.detectSnakeCollision(this.snake)) {
                 this.createGameOverMessage("loss");
             }
-
-
         }, interval);
     }
 
@@ -243,26 +241,11 @@ class Game {
         });
         this.fruit.domElement.classList.add("blur");
 
-
-        const gameOverDiv = document.createElement('div');
-        const gameOverMessage = document.createElement('div');
-        const skillMessage = document.createElement('div');
-        const btnGroup = document.createElement('div');
-        const skillBtn1 = document.createElement("button");
-        const skillBtn2 = document.createElement("button");
-        const skillBtn3 = document.createElement("button");
-
-        gameOverMessage.id = "game-over-msg";
-        gameOverDiv.id = "game-over-box"
-        skillMessage.id = "skill-msg";
-        btnGroup.id = "btn-group";
-        skillBtn1.className = "skill-btn";
-        skillBtn2.className = "skill-btn";
-        skillBtn3.className = "skill-btn";
-        skillBtn1.innerHTML = "Easy";
-        skillBtn2.innerHTML = "Medium";
-        skillBtn3.innerHTML = "Hard";
-
+        const gameOverBox = document.getElementById("game-over-box");
+        const gameOverMessage = document.getElementById("game-over-msg");
+        const skillBtn1 = document.getElementById("skill-btn-1");
+        const skillBtn2 = document.getElementById("skill-btn-2");
+        const skillBtn3 = document.getElementById("skill-btn-3");
 
         if (result === "loss") {
             gameOverMessage.innerText = "Game Over 😭";
@@ -271,38 +254,28 @@ class Game {
             gameOverMessage.innerText = "You have won 🤩";
         }
 
-        skillMessage.innerHTML = "🐉<br>Start again:";
-
-        skillBtn1.innerHTML = "Easy";
-        skillBtn2.innerHTML = "Medium";
-        skillBtn3.innerHTML = "Hard";
-
-        gameOverDiv.appendChild(gameOverMessage);
-        gameOverDiv.appendChild(skillMessage);
-        gameOverDiv.appendChild(btnGroup);
-        btnGroup.appendChild(skillBtn1);
-        btnGroup.appendChild(skillBtn2);
-        btnGroup.appendChild(skillBtn3);
-        board.appendChild(gameOverDiv);
+        gameOverBox.classList.remove("hidden");
+        gameOverBox.classList.add("game-over")
 
         skillBtn1.addEventListener('click', (event) => {
-            board.removeChild(gameOverDiv);
+            clearInterval(this.intervalId);
+            gameOverBox.classList.remove("game-over");
+            gameOverBox.classList.add("hidden")
             this.snake.forEach(snakeSegment => {
                 snakeSegment.removeInstance();
-
             });
             this.fruit.removeInstance();
-
             const level = 5; // the higher the faster does the player move: level-times per second
             const interval = 1000 / level; //refresh interval for movement
             this.reset();
             this.start(interval)
         });
         skillBtn2.addEventListener('click', (event) => {
-            board.removeChild(gameOverDiv);
+            clearInterval(this.intervalId);
+            gameOverBox.classList.remove("game-over");
+            gameOverBox.classList.add("hidden")
             this.snake.forEach(snakeSegment => {
                 snakeSegment.removeInstance();
-
             });
             this.fruit.removeInstance();
             const level = 10;
@@ -311,10 +284,11 @@ class Game {
             this.start(interval)
         });
         skillBtn3.addEventListener('click', (event) => {
-            board.removeChild(gameOverDiv);
+            clearInterval(this.intervalId);
+            gameOverBox.classList.remove("game-over");
+            gameOverBox.classList.add("hidden")
             this.snake.forEach(snakeSegment => {
                 snakeSegment.removeInstance();
-
             });
             this.fruit.removeInstance();
             const level = 15;
@@ -322,7 +296,6 @@ class Game {
             this.reset();
             this.start(interval)
         });
-
     }
 
     reset() {
