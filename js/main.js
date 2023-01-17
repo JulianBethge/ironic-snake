@@ -276,47 +276,35 @@ class Game {
 
         skillBtn1.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
-            gameOverBox.classList.remove("game-over");
-            gameOverBox.classList.add("hidden")
-            this.snake.forEach(snakeSegment => {
-                snakeSegment.removeInstance();
-            });
-            this.fruit.removeInstance();
-            const level = 5; // the higher the faster does the player move: level-times per second
-            const interval = 1000 / level; //refresh interval for movement
-            this.reset();
+            this.resetUI(gameOverBox);
+            this.resetGame();
             this.initializeGame(levels[1]);
         });
 
         skillBtn2.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
-            gameOverBox.classList.remove("game-over");
-            gameOverBox.classList.add("hidden")
-            this.snake.forEach(snakeSegment => {
-                snakeSegment.removeInstance();
-            });
-            this.fruit.removeInstance();
-            const level = 10;
-            const interval = 1000 / level;
-            this.reset();
+            this.resetUI(gameOverBox);
+            this.resetGame();
             this.initializeGame(levels[2]);
         });
         skillBtn3.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
-            gameOverBox.classList.remove("game-over");
-            gameOverBox.classList.add("hidden")
-            this.snake.forEach(snakeSegment => {
-                snakeSegment.removeInstance();
-            });
-            this.fruit.removeInstance();
-            const level = 15;
-            const interval = 1000 / level;
-            this.reset();
+            this.resetUI(gameOverBox);
+            this.resetGame();
             this.initializeGame(levels[3]);
         });
     }
 
-    reset() {
+    resetUI(gameOverBox) {
+        gameOverBox.classList.remove("game-over");
+        gameOverBox.classList.add("hidden")
+        this.snake.forEach(snakeSegment => {
+            snakeSegment.removeInstance();
+        });
+        this.fruit.removeInstance();
+    }
+
+    resetGame() {
         this.snakeHead = null;
         this.snake = [];
         this.fruit = null;
@@ -325,7 +313,6 @@ class Game {
         this.intervalId = null;
         this.keysPressed = [];
     }
-
 }
 
 class SnakeSegment {
@@ -338,12 +325,10 @@ class SnakeSegment {
         this.domElement = null;
         this.createDomElement();
         this.lastMoves = []; // store the last moves
-
     }
 
     createDomElement() {
         this.domElement = document.createElement('div');
-
         this.domElement.className = "snake";
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
@@ -354,8 +339,6 @@ class SnakeSegment {
         // const board = document.getElementById("board");
         board.appendChild(this.domElement)
     }
-
-
 
     moveUp() {
         if (this.positionY < columns - 1) {
