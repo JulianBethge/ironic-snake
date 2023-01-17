@@ -29,25 +29,31 @@ class Game {
             board.removeChild(welcomeDiv);
             const level = 5; // the higher the faster does the player move: level-times per second
             const interval = 1000 / level; //refresh interval for movement
-            this.start(interval)
+            this.initialize(interval)
         });
 
         skillBtn2.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
             const level = 10;
             const interval = 1000 / level;
-            this.start(interval)
+            this.initialize(interval)
         });
 
         skillBtn3.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
             const level = 15;
             const interval = 1000 / level;
-            this.start(interval)
+            this.initialize(interval)
         });
     }
 
-    start(interval) {
+    initialize(interval) {
+        this.setupGame();
+        this.setupScoreDisplay();
+        this.runGameLoop(interval);
+    }
+
+    setupGame() {
         this.gameBoard = new Board(columns);
         this.squares = this.gameBoard.getSquares();
         this.snakeHead = new SnakeSegment(columns / 2, columns / 2);
@@ -55,25 +61,29 @@ class Game {
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
         this.attachEventListeners();
+    }
 
+    setupScoreDisplay() {
         const scoreText = document.getElementById("score-text");
         const highscoreText = document.getElementById("highscore-text");
         const highscoreDomElement = document.getElementById("highscore-storage");
-
+    
         scoreText.classList.add("color");
         score.classList.add("color");
         highscoreText.classList.add("color");
         highscoreDomElement.classList.add("color");
         score.classList.add("border");
         board.classList.add("gradient-border");
-
+    
         score.innerText = this.points;
         highscoreText.innerHTML = "🥇 Highscore:";
-
+    
         if (localStorage.getItem("highscore")) {
             highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
         }
+    }
 
+    runGameLoop(interval){
         this.intervalId = setInterval(() => {
             this.handleFruitCollision();
             this.handleMovementInput();
@@ -271,7 +281,7 @@ class Game {
             const level = 5; // the higher the faster does the player move: level-times per second
             const interval = 1000 / level; //refresh interval for movement
             this.reset();
-            this.start(interval)
+            this.initialize(interval)
         });
         skillBtn2.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
@@ -284,7 +294,7 @@ class Game {
             const level = 10;
             const interval = 1000 / level;
             this.reset();
-            this.start(interval)
+            this.initialize(interval)
         });
         skillBtn3.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
@@ -297,7 +307,7 @@ class Game {
             const level = 15;
             const interval = 1000 / level;
             this.reset();
-            this.start(interval)
+            this.initialize(interval)
         });
     }
 
