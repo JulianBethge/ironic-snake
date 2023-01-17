@@ -74,74 +74,70 @@ class Game {
             highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
         }
 
-        //move snake
         this.intervalId = setInterval(() => {
-
-            if (this.detectFruitCollision(this.fruit)) {
-                this.points += 100;
-                score.innerText = this.points;
-                this.fruit.removeInstance();
-                this.fruit = new Fruit(this.random());
-            }
-
-            //retrieving keypressed buffer:
-            if (this.keysPressed.length > 0) {
-                this.moveDirection = this.keysPressed[0];
-                this.keysPressed.shift();
-            }
-
-            // Iteration through the complete snake array:
-            for (let i = 0; i < this.snake.length; i++) {
-
-                // The movement of the snake's head:
-                if (i == 0) {
-                    switch (this.moveDirection) {
-                        case "up": this.snakeHead.moveUp();
-                            break;
-                        case "right": this.snakeHead.moveRight();
-                            break;
-                        case "down": this.snakeHead.moveDown();
-                            break;
-                        case "left": this.snakeHead.moveLeft();
-                            break;
-                    }
-                    continue;
-                }
-
-                // The movement of the snake's body (if there is one):
-                if (this.snake.length > 1) {
-                    //get the second last move of the preceding snake segment:
-                    const secondLastMove = this.snake[i - 1].lastMoves.at(-2);
-                    const currentSnakeSegment = this.snake[i];
-                    switch (secondLastMove) {
-                        case "up": currentSnakeSegment.moveUp();
-                            break;
-                        case "right": currentSnakeSegment.moveRight();
-                            break;
-                        case "down": currentSnakeSegment.moveDown();
-                            break;
-                        case "left": currentSnakeSegment.moveLeft();
-                            break;
-
-                    }
-                }
-            }
-
+            this.handleFruitCollision();
+            this.handleMovementInput();
+            this.moveSnakeHead();
+            this.moveSnakeBody();
             this.evaluateGameStatus();
-
         }, interval);
     }
 
+    handleFruitCollision() {
+        if (this.detectFruitCollision(this.fruit)) {
+            this.points += 100;
+            score.innerText = this.points;
+            this.fruit.removeInstance();
+            this.fruit = new Fruit(this.random());
+        }
+    }
+
+    handleMovementInput() {
+        if (this.keysPressed.length > 0) {
+            this.moveDirection = this.keysPressed[0];
+            this.keysPressed.shift();
+        }
+    }
+
+    moveSnakeHead() {
+        switch (this.moveDirection) {
+            case "up": this.snakeHead.moveUp();
+                break;
+            case "right": this.snakeHead.moveRight();
+                break;
+            case "down": this.snakeHead.moveDown();
+                break;
+            case "left": this.snakeHead.moveLeft();
+                break;
+        }
+    }
+
+    moveSnakeBody() {
+        for (let i = 1; i < this.snake.length; i++) {
+            const secondLastMove = this.snake[i - 1].lastMoves.at(-2);
+            const currentSnakeSegment = this.snake[i];
+            switch (secondLastMove) {
+                case "up": currentSnakeSegment.moveUp();
+                    break;
+                case "right": currentSnakeSegment.moveRight();
+                    break;
+                case "down": currentSnakeSegment.moveDown();
+                    break;
+                case "left": currentSnakeSegment.moveLeft();
+                    break;
+            }
+        }
+    }
 
     evaluateGameStatus() {
         if (this.points > (100 * (columns ** 2)) - 300) {
             this.createGameOverMessage("win");
         }
-    
+
         if (this.detectSnakeCollision(this.snake)) {
             this.createGameOverMessage("loss");
         }
-      }
+    }
 
 
     attachEventListeners() {
