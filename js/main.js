@@ -127,15 +127,22 @@ class Game {
                 }
             }
 
-            if (this.points > (100 * (columns ** 2)) - 300) {
-                this.createGameOverMessage("win");
-            }
+            this.evaluateGameStatus();
 
-            if (this.detectSnakeCollision(this.snake)) {
-                this.createGameOverMessage("loss");
-            }
         }, interval);
     }
+
+
+    evaluateGameStatus() {
+        if (this.points > (100 * (columns ** 2)) - 300) {
+            this.createGameOverMessage("win");
+        }
+    
+        if (this.detectSnakeCollision(this.snake)) {
+            this.createGameOverMessage("loss");
+        }
+      }
+
 
     attachEventListeners() {
         document.addEventListener("keydown", (event) => {
