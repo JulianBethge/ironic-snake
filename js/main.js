@@ -24,30 +24,30 @@ class Game {
         const skillBtn1 = document.getElementById("skill-btn-1");
         const skillBtn2 = document.getElementById("skill-btn-2");
         const skillBtn3 = document.getElementById("skill-btn-3");
+        const levels = {
+            1: 5,
+            2: 10,
+            3: 15
+        };
 
         skillBtn1.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
-            const level = 5; // the higher the faster does the player move: level-times per second
-            const interval = 1000 / level; //refresh interval for movement
-            this.initialize(interval)
+            this.initializeGame(levels[1]);
         });
 
         skillBtn2.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
-            const level = 10;
-            const interval = 1000 / level;
-            this.initialize(interval)
+            this.initializeGame(levels[2]);
         });
 
         skillBtn3.addEventListener('click', (event) => {
             board.removeChild(welcomeDiv);
-            const level = 15;
-            const interval = 1000 / level;
-            this.initialize(interval)
+            this.initializeGame(levels[3]);
         });
     }
 
-    initialize(interval) {
+    initializeGame(level) {
+        const interval = 1000 / level;
         this.setupGame();
         this.setupScoreDisplay();
         this.runGameLoop(interval);
@@ -148,7 +148,6 @@ class Game {
             this.createGameOverMessage("loss");
         }
     }
-
 
     attachEventListeners() {
         document.addEventListener("keydown", (event) => {
@@ -259,6 +258,11 @@ class Game {
         const skillBtn1 = document.getElementById("skill-btn-1");
         const skillBtn2 = document.getElementById("skill-btn-2");
         const skillBtn3 = document.getElementById("skill-btn-3");
+        const levels = {
+            1: 5,
+            2: 10,
+            3: 15
+        };
 
         if (result === "loss") {
             gameOverMessage.innerText = "Game Over 😭";
@@ -281,8 +285,9 @@ class Game {
             const level = 5; // the higher the faster does the player move: level-times per second
             const interval = 1000 / level; //refresh interval for movement
             this.reset();
-            this.initialize(interval)
+            this.initializeGame(levels[1]);
         });
+
         skillBtn2.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
             gameOverBox.classList.remove("game-over");
@@ -294,7 +299,7 @@ class Game {
             const level = 10;
             const interval = 1000 / level;
             this.reset();
-            this.initialize(interval)
+            this.initializeGame(levels[2]);
         });
         skillBtn3.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
@@ -307,7 +312,7 @@ class Game {
             const level = 15;
             const interval = 1000 / level;
             this.reset();
-            this.initialize(interval)
+            this.initializeGame(levels[3]);
         });
     }
 
