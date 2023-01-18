@@ -18,8 +18,7 @@ class Game {
     }
 
     setupSkillEventListeners() {
-        const board = document.getElementById("board");
-        const welcomeDiv = document.getElementById('welcome-box');
+        const overlayBox = document.getElementById('welcome-box');
         const skillBtn1 = document.getElementById("skill-btn-1");
         const skillBtn2 = document.getElementById("skill-btn-2");
         const skillBtn3 = document.getElementById("skill-btn-3");
@@ -30,19 +29,28 @@ class Game {
         };
 
         skillBtn1.addEventListener('click', (event) => {
-            this.resetUI(welcomeDiv);
+            clearInterval(this.intervalId);
+            this.removeSnakeFruit();
+            this.resetUI(overlayBox);
+            this.resetGame();
             this.initializeGame(levels[1]);
-        }, { once: true });
+        });
 
         skillBtn2.addEventListener('click', (event) => {
-            this.resetUI(welcomeDiv);
+            clearInterval(this.intervalId);
+            this.removeSnakeFruit();
+            this.resetUI(overlayBox);
+            this.resetGame();
             this.initializeGame(levels[2]);
-        }, { once: true });
+        });
 
         skillBtn3.addEventListener('click', (event) => {
-            this.resetUI(welcomeDiv);
+            clearInterval(this.intervalId);
+            this.removeSnakeFruit();
+            this.resetUI(overlayBox);
+            this.resetGame();
             this.initializeGame(levels[3]);
-        }, { once: true });
+        });
     }
 
     initializeGame(level) {
@@ -247,28 +255,14 @@ class Game {
             localStorage.setItem("highscore", this.points);
         }
 
+
         this.snake.forEach(segment => {
             segment.domElement.classList.add("blur");
         });
         this.fruit.domElement.classList.add("blur");
-        const board = document.getElementById("board");
-        const gameOverBox = document.getElementById("welcome-box");
+        const overlayBox = document.getElementById("welcome-box");
         const gameOverMessage = document.getElementById("status-msg");
         const skillMessage = document.getElementById("skill-msg");
-        const skillBtn1 = document.getElementById("skill-btn-1");
-        const skillBtn2 = document.getElementById("skill-btn-2");
-        const skillBtn3 = document.getElementById("skill-btn-3");
-        const levels = {
-            1: 5,
-            2: 10,
-            3: 15
-        };
-
-
-        gameOverMessage.classList.add("game-over-msg");
-
-        skillMessage.innerText = "You died...  Start again?";
-
 
 
         if (result === "loss") {
@@ -278,44 +272,22 @@ class Game {
             gameOverMessage.innerText = "You have won 🤩";
         }
 
-
-        gameOverBox.classList.remove("hidden");
-        gameOverBox.classList.add("overlay")
-
-        skillBtn1.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(gameOverBox);
-            this.resetGame();
-            this.initializeGame(levels[1]);
-        });
-
-        skillBtn2.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(gameOverBox);
-            this.resetGame();
-            this.initializeGame(levels[2]);
-        });
-        skillBtn3.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(gameOverBox);
-            this.resetGame();
-            this.initializeGame(levels[3]);
-        });
+        gameOverMessage.classList.add("game-over-msg");
+        skillMessage.innerText = "You died...  Start again?";
+        overlayBox.classList.remove("hidden");
+        overlayBox.classList.add("overlay")
     }
 
     removeSnakeFruit() {
         this.snake.forEach(snakeSegment => {
             snakeSegment.removeInstance();
         });
-        this.fruit.removeInstance();
+        if(this.fruit) this.fruit.removeInstance();
     }
 
     resetUI(overlay) {
         overlay.classList.remove("overlay");
-        overlay.classList.add("hidden")
+        overlay.classList.add("hidden");
     }
 
     resetGame() {
