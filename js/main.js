@@ -29,28 +29,27 @@ class Game {
         };
 
         skillBtn1.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(overlayBox);
-            this.resetGame();
+            this.stopPrevGame(overlayBox);
             this.initializeGame(levels[1]);
         });
 
         skillBtn2.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(overlayBox);
-            this.resetGame();
+            this.stopPrevGame(overlayBox);
             this.initializeGame(levels[2]);
         });
 
         skillBtn3.addEventListener('click', (event) => {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetUI(overlayBox);
-            this.resetGame();
+            this.stopPrevGame(overlayBox);
             this.initializeGame(levels[3]);
         });
+    }
+
+    stopPrevGame (overlayBox){
+        //stops previous game (if any) and prepares a new game
+        clearInterval(this.intervalId);
+        this.removeSnakeFruit();
+        this.resetUI(overlayBox);
+        this.resetGame();
     }
 
     initializeGame(level) {
