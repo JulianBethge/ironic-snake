@@ -17,8 +17,7 @@ class Game {
         this.squares = null;
     }
 
-    //welcome sequence
-    welcome() {
+    setupSkillEventListeners() {
         const board = document.getElementById("board");
         const welcomeDiv = document.getElementById('welcome-box');
         const skillBtn1 = document.getElementById("skill-btn-1");
@@ -272,7 +271,7 @@ class Game {
         }
 
         gameOverBox.classList.remove("hidden");
-        gameOverBox.classList.add("game-over")
+        gameOverBox.classList.add("overlay")
 
         skillBtn1.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
@@ -295,9 +294,9 @@ class Game {
         });
     }
 
-    resetUI(gameOverBox) {
-        gameOverBox.classList.remove("game-over");
-        gameOverBox.classList.add("hidden")
+    resetUI(overlay) {
+        overlay.classList.remove("overlay");
+        overlay.classList.add("hidden")
         this.snake.forEach(snakeSegment => {
             snakeSegment.removeInstance();
         });
@@ -480,4 +479,4 @@ class Board {
 
 //init
 const game = new Game();
-game.welcome();
+game.setupSkillEventListeners();
