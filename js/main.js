@@ -30,19 +30,19 @@ class Game {
         };
 
         skillBtn1.addEventListener('click', (event) => {
-            board.removeChild(welcomeDiv);
+            this.resetUI(welcomeDiv);
             this.initializeGame(levels[1]);
-        });
+        }, { once: true });
 
         skillBtn2.addEventListener('click', (event) => {
-            board.removeChild(welcomeDiv);
+            this.resetUI(welcomeDiv);
             this.initializeGame(levels[2]);
-        });
+        }, { once: true });
 
         skillBtn3.addEventListener('click', (event) => {
-            board.removeChild(welcomeDiv);
+            this.resetUI(welcomeDiv);
             this.initializeGame(levels[3]);
-        });
+        }, { once: true });
     }
 
     initializeGame(level) {
@@ -66,23 +66,23 @@ class Game {
         const scoreText = document.getElementById("score-text");
         const highscoreText = document.getElementById("highscore-text");
         const highscoreDomElement = document.getElementById("highscore-storage");
-    
+
         scoreText.classList.add("color");
         score.classList.add("color");
         highscoreText.classList.add("color");
         highscoreDomElement.classList.add("color");
         score.classList.add("border");
         board.classList.add("gradient-border");
-    
+
         score.innerText = this.points;
         highscoreText.innerHTML = "🥇 Highscore:";
-    
+
         if (localStorage.getItem("highscore")) {
             highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
         }
     }
 
-    runGameLoop(interval){
+    runGameLoop(interval) {
         this.intervalId = setInterval(() => {
             this.handleFruitCollision();
             this.handleMovementInput();
@@ -251,9 +251,10 @@ class Game {
             segment.domElement.classList.add("blur");
         });
         this.fruit.domElement.classList.add("blur");
-
-        const gameOverBox = document.getElementById("game-over-box");
-        const gameOverMessage = document.getElementById("game-over-msg");
+        const board = document.getElementById("board");
+        const gameOverBox = document.getElementById("welcome-box");
+        const gameOverMessage = document.getElementById("status-msg");
+        const skillMessage = document.getElementById("skill-msg");
         const skillBtn1 = document.getElementById("skill-btn-1");
         const skillBtn2 = document.getElementById("skill-btn-2");
         const skillBtn3 = document.getElementById("skill-btn-3");
@@ -263,6 +264,13 @@ class Game {
             3: 15
         };
 
+
+        gameOverMessage.classList.add("game-over-msg");
+
+        skillMessage.innerText = "You died...  Start again?";
+
+
+
         if (result === "loss") {
             gameOverMessage.innerText = "Game Over 😭";
         }
@@ -270,11 +278,13 @@ class Game {
             gameOverMessage.innerText = "You have won 🤩";
         }
 
+
         gameOverBox.classList.remove("hidden");
         gameOverBox.classList.add("overlay")
 
         skillBtn1.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
+            this.removeSnakeFruit();
             this.resetUI(gameOverBox);
             this.resetGame();
             this.initializeGame(levels[1]);
@@ -282,25 +292,30 @@ class Game {
 
         skillBtn2.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
+            this.removeSnakeFruit();
             this.resetUI(gameOverBox);
             this.resetGame();
             this.initializeGame(levels[2]);
         });
         skillBtn3.addEventListener('click', (event) => {
             clearInterval(this.intervalId);
+            this.removeSnakeFruit();
             this.resetUI(gameOverBox);
             this.resetGame();
             this.initializeGame(levels[3]);
         });
     }
 
-    resetUI(overlay) {
-        overlay.classList.remove("overlay");
-        overlay.classList.add("hidden")
+    removeSnakeFruit() {
         this.snake.forEach(snakeSegment => {
             snakeSegment.removeInstance();
         });
         this.fruit.removeInstance();
+    }
+
+    resetUI(overlay) {
+        overlay.classList.remove("overlay");
+        overlay.classList.add("hidden")
     }
 
     resetGame() {
