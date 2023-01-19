@@ -31,12 +31,14 @@ class Game {
     }
 
     handleNewGame(overlayBox, level) {
-        //stops previous game (if any):
-        clearInterval(this.intervalId);
-        this.removeSnakeFruit();
-        this.resetUI(overlayBox);
-        this.resetGame();
-        //prepares new game:
+        //stops previous game (if there is one):
+        if (this.snakeHead !== null && this.snake.length > 0) {
+            clearInterval(this.intervalId);
+            this.removeSnakeFruit();
+            this.resetGame();
+        }
+        //prepares and starts a new game:
+        this.hideOverlay(overlayBox);
         this.initializeGame(level);
     }
 
@@ -272,7 +274,7 @@ class Game {
         if (this.fruit) this.fruit.removeInstance();
     }
 
-    resetUI(overlay) {
+    hideOverlay(overlay) {
         overlay.classList.remove("overlay");
         overlay.classList.add("hidden");
     }
