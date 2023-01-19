@@ -17,21 +17,21 @@ class Game {
         this.squares = null;
     }
 
-    setupSkillEventListeners() {
+    setupLevelButtonsEventListeners() {
         const overlayBox = document.getElementById('welcome-box');
-        const skillBtns = document.querySelectorAll(".skill-btn");
+        const levelButtons = document.querySelectorAll(".skill-btn");
         const levels = {
             1: 5,
             2: 10,
             3: 15
         };
-        for (let i = 0; i < skillBtns.length; i++) {
-            skillBtns[i].addEventListener("click", this.handleNewGame.bind(this, overlayBox, levels[i + 1]));
+        for (let i = 0; i < levelButtons.length; i++) {
+            levelButtons[i].addEventListener("click", this.handleNewGame.bind(this, overlayBox, levels[i + 1]));
         }
     }
 
     handleNewGame(overlayBox, level) {
-        //stops previous game (if there is one):
+        //stops previous game (if there is one) and resets everything:
         if (this.snakeHead !== null && this.snake.length > 0) {
             clearInterval(this.intervalId);
             this.removeSnakeFruit();
@@ -43,9 +43,9 @@ class Game {
     }
 
     initializeGame(level) {
-        const interval = 1000 / level;
-        this.setupGame();
         this.setupScoreDisplay();
+        this.setupGame();
+        const interval = 1000 / level;
         this.runGameLoop(interval);
     }
 
@@ -56,7 +56,7 @@ class Game {
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
-        this.attachEventListeners();
+        this.setupKeyboardEventListeners();
     }
 
     setupScoreDisplay() {
@@ -66,14 +66,14 @@ class Game {
             document.getElementById("highscore-text"),
             document.getElementById("highscore-storage"),
         ];
-    
+
         elements.forEach(el => {
             el.classList.add("color");
         });
-    
+
         document.getElementById("score").innerText = this.points;
         document.getElementById("highscore-text").innerHTML = "🥇 Highscore:";
-    
+
         if (localStorage.getItem("highscore")) {
             document.getElementById("highscore-storage").innerText = "" + localStorage.getItem("highscore");
         }
@@ -147,7 +147,7 @@ class Game {
         }
     }
 
-    attachEventListeners() {
+    setupKeyboardEventListeners() {
         document.addEventListener("keydown", (event) => {
             const lastMove = this.snakeHead.lastMoves.at(-1);
 
@@ -246,10 +246,10 @@ class Game {
             localStorage.setItem("highscore", this.points);
         }
 
-
         this.snake.forEach(segment => {
             segment.domElement.classList.add("blur");
         });
+
         this.fruit.domElement.classList.add("blur");
         const overlayBox = document.getElementById("welcome-box");
         const gameOverMessage = document.getElementById("status-msg");
@@ -457,4 +457,4 @@ class Board {
 
 //init
 const game = new Game();
-game.setupSkillEventListeners();
+game.setupLevelButtonsEventListeners();
