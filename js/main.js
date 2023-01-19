@@ -19,37 +19,25 @@ class Game {
 
     setupSkillEventListeners() {
         const overlayBox = document.getElementById('welcome-box');
-        const skillBtn1 = document.getElementById("skill-btn-1");
-        const skillBtn2 = document.getElementById("skill-btn-2");
-        const skillBtn3 = document.getElementById("skill-btn-3");
+        const skillBtns = document.querySelectorAll(".skill-btn");
         const levels = {
             1: 5,
             2: 10,
             3: 15
         };
-
-        skillBtn1.addEventListener('click', (event) => {
-            this.stopPrevGame(overlayBox);
-            this.initializeGame(levels[1]);
-        });
-
-        skillBtn2.addEventListener('click', (event) => {
-            this.stopPrevGame(overlayBox);
-            this.initializeGame(levels[2]);
-        });
-
-        skillBtn3.addEventListener('click', (event) => {
-            this.stopPrevGame(overlayBox);
-            this.initializeGame(levels[3]);
-        });
+        for (let i = 0; i < skillBtns.length; i++) {
+            skillBtns[i].addEventListener("click", this.handleNewGame.bind(this, overlayBox, levels[i + 1]));
+        }
     }
 
-    stopPrevGame (overlayBox){
-        //stops previous game (if any) and prepares a new game
+    handleNewGame(overlayBox, level) {
+        //stops previous game (if any):
         clearInterval(this.intervalId);
         this.removeSnakeFruit();
         this.resetUI(overlayBox);
         this.resetGame();
+        //prepares new game:
+        this.initializeGame(level);
     }
 
     initializeGame(level) {
@@ -281,7 +269,7 @@ class Game {
         this.snake.forEach(snakeSegment => {
             snakeSegment.removeInstance();
         });
-        if(this.fruit) this.fruit.removeInstance();
+        if (this.fruit) this.fruit.removeInstance();
     }
 
     resetUI(overlay) {
