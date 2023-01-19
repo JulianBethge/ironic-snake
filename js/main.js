@@ -60,23 +60,25 @@ class Game {
     }
 
     setupScoreDisplay() {
-        const scoreText = document.getElementById("score-text");
-        const highscoreText = document.getElementById("highscore-text");
-        const highscoreDomElement = document.getElementById("highscore-storage");
-
-        scoreText.classList.add("color");
-        score.classList.add("color");
-        highscoreText.classList.add("color");
-        highscoreDomElement.classList.add("color");
-        score.classList.add("border");
-        board.classList.add("gradient-border");
-
-        score.innerText = this.points;
-        highscoreText.innerHTML = "🥇 Highscore:";
-
+        const elements = [
+            document.getElementById("score-text"),
+            document.getElementById("score"),
+            document.getElementById("highscore-text"),
+            document.getElementById("highscore-storage"),
+        ];
+    
+        elements.forEach(el => {
+            el.classList.add("color");
+        });
+    
+        document.getElementById("score").innerText = this.points;
+        document.getElementById("highscore-text").innerHTML = "🥇 Highscore:";
+    
         if (localStorage.getItem("highscore")) {
-            highscoreDomElement.innerText = "" + localStorage.getItem("highscore");
+            document.getElementById("highscore-storage").innerText = "" + localStorage.getItem("highscore");
         }
+        document.getElementById("score").classList.add("border");
+        document.getElementById("board").classList.add("gradient-border");
     }
 
     runGameLoop(interval) {
