@@ -7,25 +7,25 @@
     <title>Ironic Snake</title>
     <link rel="stylesheet" href="./css/main.css" />
   </head>
-  <body id="body">
-    <div class="sides">
+  <body id="body" class="flex">
+    <div class="sides" class="flex">
       <div id="score-text">
         <h2>Score:</h2>
       </div>
       <div id="score"></div>
-      <div id="highscore">
+      <div id="highscore" class="flex">
         <span id="highscore-text"></span><br />
         <span id="highscore-storage"></span>
       </div>
     </div>
-    <div id="board">
-      <div id="welcome-box" class="overlay">
-        <div id="status-msg" class="status icon">
+    <div id="board" class="flex">
+      <div id="welcome-box" class="overlay flex">
+        <div id="status-msg" class="status icon flex">
           <h1>Ironic Snake</h1>
           🐉
         </div>
         <div id="skill-msg">Choose difficulty level to start:</div>
-        <div id="btn-group">
+        <div id="btn-group" class="flex">
           <button class="skill-btn" id="skill-btn-1">Easy</button>
           <button class="skill-btn" id="skill-btn-2">Medium</button>
           <button class="skill-btn" id="skill-btn-3">Hard</button>

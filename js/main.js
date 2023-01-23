@@ -416,7 +416,7 @@ class Fruit {
         const leaf2 = document.createElement('div');
 
 
-        this.domElement.id = "fruit";
+        this.domElement.className = "fruit";
         leaf1.className = "leaf-1";
         leaf2.className = "leaf-2";
 
