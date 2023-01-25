@@ -85,8 +85,7 @@ class Game {
         this.intervalId = setInterval(() => {
             this.handleFruitCollision();
             this.handleMovementInput();
-            this.moveSnakeHead();
-            this.moveSnakeBody();
+            this.moveSnake();
             this.evaluateGameStatus();
         }, interval);
     }
@@ -107,33 +106,12 @@ class Game {
         }
     }
 
-    moveSnakeHead() {
-        switch (this.moveDirection) {
-            case "up": this.snakeHead.moveUp();
-                break;
-            case "right": this.snakeHead.moveRight();
-                break;
-            case "down": this.snakeHead.moveDown();
-                break;
-            case "left": this.snakeHead.moveLeft();
-                break;
-        }
-    }
+    moveSnake() {
+        this.snakeHead.move(this.moveDirection);
 
-    moveSnakeBody() {
         for (let i = 1; i < this.snake.length; i++) {
             const secondLastMove = this.snake[i - 1].lastMoves.at(-2);
-            const currentSnakeSegment = this.snake[i];
-            switch (secondLastMove) {
-                case "up": currentSnakeSegment.moveUp();
-                    break;
-                case "right": currentSnakeSegment.moveRight();
-                    break;
-                case "down": currentSnakeSegment.moveDown();
-                    break;
-                case "left": currentSnakeSegment.moveLeft();
-                    break;
-            }
+            this.snake[i].move(secondLastMove);
         }
     }
 
@@ -317,79 +295,64 @@ class SnakeSegment {
         board.appendChild(this.domElement)
     }
 
-    moveUp() {
-        if (this.positionY < columns - 1) {
-            this.positionY += 1;
-        } else {
-            this.positionY = 0;
+    move(direction) {
+        switch (direction) {
+            case "up": {
+                if (this.positionY < columns - 1) {
+                    this.positionY += 1;
+                } else {
+                    this.positionY = 0;
+                }
+                break;
+            }
+            case "right": {
+                if (this.positionX < columns - 1) {
+                    this.positionX += 1;
+                } else {
+                    this.positionX = 0;
+                }
+            }
+                break;
+            case "down": {
+                if (this.positionY > 0) {
+                    this.positionY -= 1;
+                } else {
+                    this.positionY = columns - 1;
+                }
+            }
+                break;
+            case "left": {
+                if (this.positionX > 0) {
+                    this.positionX -= 1;
+                } else {
+                    this.positionX = columns - 1;
+                }
+            }
         }
-        this.updateDom("y");
-        this.updateLastMoves("up");
-        this.updateCoordinates();
+
+        this.updateDomCoordinates(direction);
+        this.updateLastMoves(direction);
     }
 
-    moveRight() {
-        if (this.positionX < columns - 1) {
-            this.positionX += 1;
-        } else {
-            this.positionX = 0;
-        }
-        this.updateDom("x");
-        this.updateLastMoves("right");
-        this.updateCoordinates();
-    }
-
-    moveDown() {
-        if (this.positionY > 0) {
-            this.positionY -= 1;
-        } else {
-            this.positionY = columns - 1;
-        }
-        this.updateDom("y");
-        this.updateLastMoves("down");
-        this.updateCoordinates();
-    }
-
-    moveLeft() {
-        if (this.positionX > 0) {
-            this.positionX -= 1;
-        } else {
-            this.positionX = columns - 1;
-        }
-        this.updateDom("x");
-        this.updateLastMoves("left");
-        this.updateCoordinates();
-    }
-
-    updateDom(axis) {
-        if (axis == "x") {
+    updateDomCoordinates(direction) {
+        if (direction == "left" || direction == "right") {
             this.domElement.style.left = this.positionX * fieldSize + "px";
         }
-        if (axis == "y") {
+        if (direction == "up" || direction == "down") {
             this.domElement.style.bottom = this.positionY * fieldSize + "px";
         }
+
+        this.position = [this.positionX, this.positionY];
     }
 
     updateLastMoves(direction) {
-        switch (direction) {
-            case "up": this.lastMoves.push("up");
-                break;
-            case "right": this.lastMoves.push("right");
-                break;
-            case "down": this.lastMoves.push("down");
-                break;
-            case "left": this.lastMoves.push("left");
-                break;
-        }
+        this.lastMoves.push(direction);
 
         if (this.lastMoves.length > 2) {
             this.lastMoves.shift();
         }
     }
 
-    updateCoordinates() {
-        this.position = [this.positionX, this.positionY];
-    }
 
     removeInstance() {
         board.removeChild(this.domElement);
@@ -414,7 +377,6 @@ class Fruit {
         this.domElement = document.createElement('div');
         const leaf1 = document.createElement('div');
         const leaf2 = document.createElement('div');
-
 
         this.domElement.className = "fruit";
         leaf1.className = "leaf-1";
