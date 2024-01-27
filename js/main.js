@@ -1,5 +1,5 @@
 //game constants
-const columns = 24; //number of columns/ rows
+const columns = 4; //number of columns/ rows
 const fieldSize = Math.floor(board.offsetWidth / columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
@@ -15,6 +15,9 @@ class Game {
         this.keysPressed = []; // a buffer for pressed keys for better movement control
         this.gameBoard = null;
         this.squares = null;
+        this.biteSound = null;
+        this.lossSound = null;
+        this.winSound = null;
     }
 
     setupLevelButtonsEventListeners() {
@@ -43,8 +46,9 @@ class Game {
     }
 
     initializeGame(level) {
-        this.setupScoreDisplay();
         this.setupGame();
+        this.setupScoreDisplay();
+        this.setupSounds();
         const interval = 1000 / level;
         this.runGameLoop(interval);
     }
@@ -57,6 +61,7 @@ class Game {
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
         this.setupKeyboardEventListeners();
+        
     }
 
     setupScoreDisplay() {
@@ -81,7 +86,14 @@ class Game {
         document.getElementById("board").classList.add("gradient-border");
     }
 
+    setupSounds(){
+        this.biteSound = new Sound('./sounds/notification-for-game-scenes-132473.mp3');
+        this.lossSound = new Sound('./sounds/pipe-117724.mp3');
+        this.winSound = new Sound('./sounds/exhilarating-electro-153282.mp3');
+    }
+
     runGameLoop(interval) {
+        
         this.intervalId = setInterval(() => {
             this.handleFruitCollision();
             this.handleMovementInput();
@@ -92,6 +104,7 @@ class Game {
 
     handleFruitCollision() {
         if (this.detectFruitCollision(this.fruit)) {
+            this.biteSound.play();
             this.points += 100;
             score.innerText = this.points;
             this.fruit.removeInstance();
@@ -117,10 +130,12 @@ class Game {
 
     evaluateGameStatus() {
         if (this.points > (100 * (columns ** 2)) - 300) {
+            this.winSound.play();
             this.createGameOverMessage("win");
         }
 
         if (this.detectSnakeCollision(this.snake)) {
+            this.lossSound.play();
             this.createGameOverMessage("loss");
         }
     }
@@ -414,6 +429,19 @@ class Board {
 
     getSquares() {
         return this.squares;
+    }
+}
+
+class Sound {
+    constructor(src) {
+        this.sound = new Audio(src);
+        this.sound.volume = 0.75;
+        this.sound.load();
+    }
+
+    play() {
+        this.sound.currentTime = 0;
+        this.sound.play();
     }
 }
 
