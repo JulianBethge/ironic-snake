@@ -1,5 +1,5 @@
 //game constants
-const columns = 4; //number of columns/ rows
+const columns = 24; //number of columns/ rows
 const fieldSize = Math.floor(board.offsetWidth / columns);
 board.style.width = fieldSize * columns + "px";
 board.style.height = fieldSize * columns + "px";
