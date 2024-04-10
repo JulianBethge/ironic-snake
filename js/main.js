@@ -41,6 +41,7 @@ class Game {
 
         startBtn.addEventListener("click", () => this.startBtnClickHandler());
         settingsBtn.addEventListener("click", () => this.settingsBtnClickHandler());
+        this.setupKeyboardEventListeners();
     }
 
     startBtnClickHandler() {
@@ -61,8 +62,13 @@ class Game {
     }
 
     okBtnClickHandler() {
-        this.hideContainer(this.settingsContainer);
-        this.showContainer(this.welcomeContainer);
+        if (this.currentGameStatus === this.gameStatus.STOPPED) {
+            this.hideContainer(this.settingsContainer);
+            this.showContainer(this.welcomeContainer);
+        } else if (this.currentGameStatus === this.gameStatus.PAUSED) {
+            this.setupSounds();
+            this.continue();
+        }
     }
 
     setupGame() {
@@ -75,7 +81,6 @@ class Game {
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
-        this.setupKeyboardEventListeners();
         this.board.classList.add("gradient-border");
     }
 
@@ -103,16 +108,20 @@ class Game {
     setupSounds() {
         this.biteSound = new Sound("./sounds/notification-for-game-scenes-132473.mp3", this.settings.volume);
         this.lossSound = new Sound("./sounds/pipe-117724.mp3", this.settings.volume);
-        this.winSound = new Sound("./sounds/exhilarating-electro-153282.mp3",this.settings.volume);
+        this.winSound = new Sound("./sounds/exhilarating-electro-153282.mp3", this.settings.volume);
     }
 
     runGameLoop(interval) {
-        this.intervalId = setInterval(() => {
-            this.handleFruitCollision();
-            this.handleMovementInput();
-            this.moveSnake();
-            this.evaluateGameStatus();
-        }, interval);
+        if (this.currentGameStatus !== this.gameStatus.RUNNING) {
+            this.currentGameStatus = this.gameStatus.RUNNING
+            this.intervalId = setInterval(() => {
+                this.handleFruitCollision();
+                this.handleMovementInput();
+                this.moveSnake();
+                this.evaluateGameStatus();
+            }, interval);
+        }
+
     }
 
     handleFruitCollision() {
@@ -153,84 +162,117 @@ class Game {
         }
     }
 
-    setupKeyboardEventListeners() {
+    pause() {
+        if (this.currentGameStatus === this.gameStatus.RUNNING) {
+            this.currentGameStatus = this.gameStatus.PAUSED
+            clearInterval(this.intervalId);
+            this.showSettings()
+        }
+    }
+
+    continue() {
+        if (this.currentGameStatus === this.gameStatus.PAUSED) {
+            this.runGameLoop(this.loopInterval)
+            this.hideContainer(this.settingsContainer);
+        }
+    }
+
+    detectEscapeKey() {
         document.addEventListener("keydown", (event) => {
-            const lastMove = this.snakeHead.lastMoves.at(-1);
-
-            if (this.keysPressed.length === 0) {
-                if (
-                    (lastMove === "left" || lastMove == "right") &&
-                    (event.key === "ArrowUp" ||
-                        event.key === "w" ||
-                        event.key === "W")
-                ) {
-                    this.keysPressed.push("up");
-                }
-                if (
-                    (lastMove === "up" || lastMove == "down") &&
-                    (event.key === "ArrowRight" ||
-                        event.key === "d" ||
-                        event.key === "D")
-                ) {
-                    this.keysPressed.push("right");
-                }
-                if (
-                    (lastMove === "left" || lastMove == "right") &&
-                    (event.key === "ArrowDown" ||
-                        event.key === "s" ||
-                        event.key === "S")
-                ) {
-                    this.keysPressed.push("down");
-                }
-                if (
-                    (lastMove === "up" || lastMove == "down") &&
-                    (event.key === "ArrowLeft" ||
-                        event.key === "a" ||
-                        event.key === "A")
-                ) {
-                    this.keysPressed.push("left");
-                }
-            }
-
-            if (this.keysPressed.length === 1) {
-                if (
-                    (this.keysPressed[0] === "left" ||
-                        this.keysPressed[0] == "right") &&
-                    (event.key === "ArrowUp" ||
-                        event.key === "w" ||
-                        event.key === "W")
-                ) {
-                    this.keysPressed.push("up");
-                }
-                if (
-                    (this.keysPressed[0] === "up" ||
-                        this.keysPressed[0] == "down") &&
-                    (event.key === "ArrowRight" ||
-                        event.key === "d" ||
-                        event.key === "D")
-                ) {
-                    this.keysPressed.push("right");
-                }
-                if (
-                    (this.keysPressed[0] === "left" ||
-                        this.keysPressed[0] == "right") &&
-                    (event.key === "ArrowDown" ||
-                        event.key === "s" ||
-                        event.key === "S")
-                ) {
-                    this.keysPressed.push("down");
-                }
-                if (
-                    (this.keysPressed[0] === "up" ||
-                        this.keysPressed[0] == "down") &&
-                    (event.key === "ArrowLeft" ||
-                        event.key === "a" ||
-                        event.key === "A")
-                ) {
-                    this.keysPressed.push("left");
+            if (event.key === "Escape") {
+                if (this.currentGameStatus === this.gameStatus.RUNNING) {
+                    this.pause();
+                } else if (this.currentGameStatus === this.gameStatus.PAUSED) {
+                    this.continue();
                 }
             }
         });
+    }
+
+    detectArrowKeys() {
+        document.addEventListener("keydown", (event) => {
+            if (this.currentGameStatus === this.gameStatus.RUNNING) {
+                const lastMove = this.snakeHead.lastMoves.at(-1);
+                if (this.keysPressed.length === 0) {
+                    if (
+                        (lastMove === "left" || lastMove == "right") &&
+                        (event.key === "ArrowUp" ||
+                            event.key === "w" ||
+                            event.key === "W")
+                    ) {
+                        this.keysPressed.push("up");
+                    }
+                    if (
+                        (lastMove === "up" || lastMove == "down") &&
+                        (event.key === "ArrowRight" ||
+                            event.key === "d" ||
+                            event.key === "D")
+                    ) {
+                        this.keysPressed.push("right");
+                    }
+                    if (
+                        (lastMove === "left" || lastMove == "right") &&
+                        (event.key === "ArrowDown" ||
+                            event.key === "s" ||
+                            event.key === "S")
+                    ) {
+                        this.keysPressed.push("down");
+                    }
+                    if (
+                        (lastMove === "up" || lastMove == "down") &&
+                        (event.key === "ArrowLeft" ||
+                            event.key === "a" ||
+                            event.key === "A")
+                    ) {
+                        this.keysPressed.push("left");
+                    }
+                }
+                if (this.keysPressed.length === 1) {
+                    if (
+                        (this.keysPressed[0] === "left" ||
+                            this.keysPressed[0] == "right") &&
+                        (event.key === "ArrowUp" ||
+                            event.key === "w" ||
+                            event.key === "W")
+                    ) {
+                        this.keysPressed.push("up");
+                    }
+                    if (
+                        (this.keysPressed[0] === "up" ||
+                            this.keysPressed[0] == "down") &&
+                        (event.key === "ArrowRight" ||
+                            event.key === "d" ||
+                            event.key === "D")
+                    ) {
+                        this.keysPressed.push("right");
+                    }
+                    if (
+                        (this.keysPressed[0] === "left" ||
+                            this.keysPressed[0] == "right") &&
+                        (event.key === "ArrowDown" ||
+                            event.key === "s" ||
+                            event.key === "S")
+                    ) {
+                        this.keysPressed.push("down");
+                    }
+                    if (
+                        (this.keysPressed[0] === "up" ||
+                            this.keysPressed[0] == "down") &&
+                        (event.key === "ArrowLeft" ||
+                            event.key === "a" ||
+                            event.key === "A")
+                    ) {
+                        this.keysPressed.push("left");
+                    }
+                }
+            }
+        });
+    }
+
+
+    setupKeyboardEventListeners() {
+        this.detectEscapeKey();
+        this.detectArrowKeys();
     }
 
     detectFruitCollision(fruit) {
@@ -305,6 +347,7 @@ class Game {
     }
 
     createGameOverMessage(result) {
+        this.currentGameStatus = this.gameStatus.STOPPED;
         clearInterval(this.intervalId);
 
         if (this.points > localStorage.getItem("highscore")) {
@@ -354,12 +397,8 @@ class Game {
 
 
     resetGame() {
-        if (this.snakeHead !== null && this.snake.length > 0) {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-        }
-
-
+        this.removeSnakeFruit();
+        clearInterval(this.intervalId);
         this.snakeHead = null;
         this.snake = [];
         this.fruit = null;
@@ -531,16 +570,19 @@ class Sound {
 }
 
 class Settings {
-    constructor(initialSoundVolume) {
+    constructor(initialSettingValues) {
         this.volumeSlider = document.getElementById("volume-slider");
-        this.volumeSlider.value = initialSoundVolume;
+        this.volumeSlider.value = initialSettingValues.soundVolume;
         this.volumeValue = document.getElementById("volume-value");
         this.volume = this.volumeSlider.value / 100;
         this.volumeSlider.addEventListener("input", this.updateVolume.bind(this));
+        this.volumeBubbleSound = new Sound("./sounds/shooting-sound-fx-159024.mp3", this.volume);
     }
     updateVolume() {
         this.volumeValue.textContent = `Volume-Value: ${this.volumeSlider.value}%`;
         this.volume = this.volumeSlider.value / 100;
+        this.volumeBubbleSound.sound.volume = this.volume;
+        this.volumeBubbleSound.play();
     }
 }
 
@@ -549,9 +591,11 @@ const COLUMNS = 24; //number of columns/ rows
 const FIELDSIZE = Math.floor(board.offsetWidth / COLUMNS);
 board.style.width = FIELDSIZE * COLUMNS + "px";
 board.style.height = FIELDSIZE * COLUMNS + "px";
-const initialSoundVolume = 5;
+const initialSettingValues = {
+    soundVolume: 5,
+}
 
 //init
 const game = new Game();
-const settings = new Settings(initialSoundVolume);
+const settings = new Settings(initialSettingValues);
 game.setupHud(settings);

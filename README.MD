@@ -16,15 +16,24 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
 - Good Luck!
 
 ### About the Author
-👨‍💻 Julian Bethge  
-📍 Homebase: Berlin  
-💻 Full Stack Web Developer (Remote)
+👨‍💻 [Julian Bethge](https://www.linkedin.com/in/julian-bethge/)  
 🎓 Bachelor of Science in Media Informatics
+💻 Full Stack Web Developer (Remote)
+📍 Homebase: Berlin
 
 ### Facts & Features
 - The player can wrap around the screen edges
 - Score Display
 - Highscore (local)
-- Three difficulty levels
 - Written in JS, CSS and HTML
-- Sound Effects by [UNIVERSFIELD](https://pixabay.com/de/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=117724) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=117724)
+- Sound Effects by 
+    - [UNIVERSFIELD](https://pixabay.com/de/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=117724) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=117724)
+    - [Luca Di Alessandro](https://pixabay.com/users/lucadialessandro-25927643/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=159024) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=159024)
+
+#### Change Log
+**2024/04/10**: 
+- Improved settings menu for sound volume: 
+    - Auditory feedback for the volume slider
+    - Volume can be changed during a game (during pause)
+- Added Pausing Function:
+    - With escape you can now pause the Game and continue
