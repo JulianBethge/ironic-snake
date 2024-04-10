@@ -1,9 +1,3 @@
-//game constants
-const columns = 24; //number of columns/ rows
-const fieldSize = Math.floor(board.offsetWidth / columns);
-board.style.width = fieldSize * columns + "px";
-board.style.height = fieldSize * columns + "px";
-
 class Game {
     constructor() {
         this.snakeHead = null; //  the first segment of the snake, the head, which the player can control
@@ -18,50 +12,71 @@ class Game {
         this.biteSound = null;
         this.lossSound = null;
         this.winSound = null;
-    }
-
-    setupLevelButtonsEventListeners() {
-        const overlayBox = document.getElementById('welcome-box');
-        const levelButtons = document.querySelectorAll(".skill-btn");
-        const levels = {
-            1: 5,
-            2: 10,
-            3: 15
+        this.levels = {
+            EASY: 5,
+            NORMAL: 10,
+            HARD: 15
         };
-        for (let i = 0; i < levelButtons.length; i++) {
-            levelButtons[i].addEventListener("click", this.handleNewGame.bind(this, overlayBox, levels[i + 1]));
-        }
+        this.currentLevel = this.levels.NORMAL;
+        this.loopInterval = 1000 / this.currentLevel;
+        this.gameStatus = {
+            STOPPED: 'stopped',
+            RUNNING: 'running',
+            PAUSED: 'paused'
+        };
+        this.currentGameStatus = this.gameStatus.STOPPED;
+        this.welcomeContainer = document.getElementById("welcome-container");
+        this.settingsContainer = document.getElementById("settings-container");
+        this.board = document.getElementById("board");
+        this.settings = null;
     }
 
-    handleNewGame(overlayBox, level) {
-        //stops previous game (if there is one) and resets everything:
-        if (this.snakeHead !== null && this.snake.length > 0) {
-            clearInterval(this.intervalId);
-            this.removeSnakeFruit();
-            this.resetGame();
-        }
-        //prepares and starts a new game:
-        this.hideOverlay(overlayBox);
-        this.initializeGame(level);
+    setupHud(settings) {
+        this.settings = settings;
+        this.showContainer(this.welcomeContainer);
+        this.hideContainer(this.settingsContainer);
+
+        const startBtn = document.querySelector(".start");
+        const settingsBtn = document.querySelector(".settings");
+
+        startBtn.addEventListener("click", () => this.startBtnClickHandler());
+        settingsBtn.addEventListener("click", () => this.settingsBtnClickHandler());
     }
 
-    initializeGame(level) {
+    startBtnClickHandler() {
+        this.hideContainer(this.welcomeContainer);
+        this.resetGame();
         this.setupGame();
-        this.setupScoreDisplay();
-        this.setupSounds();
-        const interval = 1000 / level;
-        this.runGameLoop(interval);
+    }
+
+    settingsBtnClickHandler() {
+        this.hideContainer(this.welcomeContainer);
+        this.showSettings();
+    }
+
+    showSettings() {
+        this.showContainer(this.settingsContainer);
+        const okBtn = document.querySelector(".ok");
+        okBtn.addEventListener("click", () => this.okBtnClickHandler());
+    }
+
+    okBtnClickHandler() {
+        this.hideContainer(this.settingsContainer);
+        this.showContainer(this.welcomeContainer);
     }
 
     setupGame() {
-        this.gameBoard = new Board(columns);
+        this.setupScoreDisplay();
+        this.setupSounds();
+        this.runGameLoop(this.loopInterval);
+        this.gameBoard = new Board(COLUMNS);
         this.squares = this.gameBoard.getSquares();
-        this.snakeHead = new SnakeSegment(columns / 2, columns / 2);
+        this.snakeHead = new SnakeSegment(COLUMNS / 2, COLUMNS / 2);
         this.moveDirection = "right";
         this.snake.push(this.snakeHead);
         this.fruit = new Fruit(this.random());
         this.setupKeyboardEventListeners();
-        
+        this.board.classList.add("gradient-border");
     }
 
     setupScoreDisplay() {
@@ -71,8 +86,7 @@ class Game {
             document.getElementById("highscore-text"),
             document.getElementById("highscore-storage"),
         ];
-
-        elements.forEach(el => {
+        elements.forEach((el) => {
             el.classList.add("color");
         });
 
@@ -80,20 +94,19 @@ class Game {
         document.getElementById("highscore-text").innerHTML = "🥇 Highscore:";
 
         if (localStorage.getItem("highscore")) {
-            document.getElementById("highscore-storage").innerText = "" + localStorage.getItem("highscore");
+            document.getElementById("highscore-storage").innerText =
+                "" + localStorage.getItem("highscore");
         }
         document.getElementById("score").classList.add("border");
-        document.getElementById("board").classList.add("gradient-border");
     }
 
-    setupSounds(){
-        this.biteSound = new Sound('./sounds/notification-for-game-scenes-132473.mp3');
-        this.lossSound = new Sound('./sounds/pipe-117724.mp3');
-        this.winSound = new Sound('./sounds/exhilarating-electro-153282.mp3');
+    setupSounds() {
+        this.biteSound = new Sound("./sounds/notification-for-game-scenes-132473.mp3", this.settings.volume);
+        this.lossSound = new Sound("./sounds/pipe-117724.mp3", this.settings.volume);
+        this.winSound = new Sound("./sounds/exhilarating-electro-153282.mp3",this.settings.volume);
     }
 
     runGameLoop(interval) {
-        
         this.intervalId = setInterval(() => {
             this.handleFruitCollision();
             this.handleMovementInput();
@@ -129,7 +142,7 @@ class Game {
     }
 
     evaluateGameStatus() {
-        if (this.points > (100 * (columns ** 2)) - 300) {
+        if (this.points > 100 * COLUMNS ** 2 - 300) {
             this.winSound.play();
             this.createGameOverMessage("win");
         }
@@ -145,31 +158,75 @@ class Game {
             const lastMove = this.snakeHead.lastMoves.at(-1);
 
             if (this.keysPressed.length === 0) {
-                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W")) {
+                if (
+                    (lastMove === "left" || lastMove == "right") &&
+                    (event.key === "ArrowUp" ||
+                        event.key === "w" ||
+                        event.key === "W")
+                ) {
                     this.keysPressed.push("up");
                 }
-                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")) {
+                if (
+                    (lastMove === "up" || lastMove == "down") &&
+                    (event.key === "ArrowRight" ||
+                        event.key === "d" ||
+                        event.key === "D")
+                ) {
                     this.keysPressed.push("right");
                 }
-                if ((lastMove === "left" || lastMove == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")) {
+                if (
+                    (lastMove === "left" || lastMove == "right") &&
+                    (event.key === "ArrowDown" ||
+                        event.key === "s" ||
+                        event.key === "S")
+                ) {
                     this.keysPressed.push("down");
                 }
-                if ((lastMove === "up" || lastMove == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")) {
+                if (
+                    (lastMove === "up" || lastMove == "down") &&
+                    (event.key === "ArrowLeft" ||
+                        event.key === "a" ||
+                        event.key === "A")
+                ) {
                     this.keysPressed.push("left");
                 }
             }
 
             if (this.keysPressed.length === 1) {
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowUp" || event.key === "w" || event.key === "W")) {
+                if (
+                    (this.keysPressed[0] === "left" ||
+                        this.keysPressed[0] == "right") &&
+                    (event.key === "ArrowUp" ||
+                        event.key === "w" ||
+                        event.key === "W")
+                ) {
                     this.keysPressed.push("up");
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowRight" || event.key === "d" || event.key === "D")) {
+                if (
+                    (this.keysPressed[0] === "up" ||
+                        this.keysPressed[0] == "down") &&
+                    (event.key === "ArrowRight" ||
+                        event.key === "d" ||
+                        event.key === "D")
+                ) {
                     this.keysPressed.push("right");
                 }
-                if ((this.keysPressed[0] === "left" || this.keysPressed[0] == "right") && (event.key === "ArrowDown" || event.key === "s" || event.key === "S")) {
+                if (
+                    (this.keysPressed[0] === "left" ||
+                        this.keysPressed[0] == "right") &&
+                    (event.key === "ArrowDown" ||
+                        event.key === "s" ||
+                        event.key === "S")
+                ) {
                     this.keysPressed.push("down");
                 }
-                if ((this.keysPressed[0] === "up" || this.keysPressed[0] == "down") && (event.key === "ArrowLeft" || event.key === "a" || event.key === "A")) {
+                if (
+                    (this.keysPressed[0] === "up" ||
+                        this.keysPressed[0] == "down") &&
+                    (event.key === "ArrowLeft" ||
+                        event.key === "a" ||
+                        event.key === "A")
+                ) {
                     this.keysPressed.push("left");
                 }
             }
@@ -177,8 +234,10 @@ class Game {
     }
 
     detectFruitCollision(fruit) {
-        if (this.snakeHead.positionX === fruit.positionX &&
-            this.snakeHead.positionY === fruit.positionY) {
+        if (
+            this.snakeHead.positionX === fruit.positionX &&
+            this.snakeHead.positionY === fruit.positionY
+        ) {
             this.createSegment(this.snake.at(-1));
             return true;
         }
@@ -191,8 +250,10 @@ class Game {
         const body = snakeBody.slice(1);
 
         body.forEach((currentSnakeSegment) => {
-            if (head[0].positionX === currentSnakeSegment.positionX &&
-                head[0].positionY === currentSnakeSegment.positionY) {
+            if (
+                head[0].positionX === currentSnakeSegment.positionX &&
+                head[0].positionY === currentSnakeSegment.positionY
+            ) {
                 hasCollided = true;
             }
         });
@@ -203,10 +264,18 @@ class Game {
         let x = lastSnakeSegment.positionX;
         let y = lastSnakeSegment.positionY;
 
-        if (lastSnakeSegment.lastMoves.at(-1) === "up") { y--; }
-        if (lastSnakeSegment.lastMoves.at(-1) === "right") { x--; }
-        if (lastSnakeSegment.lastMoves.at(-1) === "down") { y++; }
-        if (lastSnakeSegment.lastMoves.at(-1) === "left") { x++; }
+        if (lastSnakeSegment.lastMoves.at(-1) === "up") {
+            y--;
+        }
+        if (lastSnakeSegment.lastMoves.at(-1) === "right") {
+            x--;
+        }
+        if (lastSnakeSegment.lastMoves.at(-1) === "down") {
+            y++;
+        }
+        if (lastSnakeSegment.lastMoves.at(-1) === "left") {
+            x++;
+        }
 
         const sb = new SnakeSegment(x, y);
         this.snake.push(sb);
@@ -214,13 +283,16 @@ class Game {
 
     random() {
         // Get all coordinates of the snake to exclude them from possible fruit spawn places
-        const snakeSquares = this.snake.map(part => part.position);
+        const snakeSquares = this.snake.map((part) => part.position);
 
         // Get all free squares (where the snake is not)
-        const freeSquares = this.squares.filter(square => {
+        const freeSquares = this.squares.filter((square) => {
             let isFree = true;
             for (let i = 0; i < snakeSquares.length; i++) {
-                if (snakeSquares[i][0] == square[0] && snakeSquares[i][1] == square[1]) {
+                if (
+                    snakeSquares[i][0] == square[0] &&
+                    snakeSquares[i][1] == square[1]
+                ) {
                     isFree = false;
                     break;
                 }
@@ -239,15 +311,14 @@ class Game {
             localStorage.setItem("highscore", this.points);
         }
 
-        this.snake.forEach(segment => {
+        this.snake.forEach((segment) => {
             segment.domElement.classList.add("blur");
         });
 
         this.fruit.domElement.classList.add("blur");
-        const overlayBox = document.getElementById("welcome-box");
-        const gameOverMessage = document.getElementById("status-msg");
-        const skillMessage = document.getElementById("skill-msg");
 
+        const gameOverMessage = document.getElementById("status-msg");
+        const statusMessage = document.getElementById("end-msg");
 
         if (result === "loss") {
             gameOverMessage.innerText = "Game Over 😭";
@@ -257,24 +328,38 @@ class Game {
         }
 
         gameOverMessage.classList.add("game-over-msg");
-        skillMessage.innerText = "You died...  Start again?";
-        overlayBox.classList.remove("hidden");
-        overlayBox.classList.add("overlay")
+        statusMessage.innerText = "Ready to try again?";
+        this.board.classList.remove("gradient-border");
+        this.showContainer(this.welcomeContainer);
     }
 
     removeSnakeFruit() {
-        this.snake.forEach(snakeSegment => {
+        this.snake.forEach((snakeSegment) => {
             snakeSegment.removeInstance();
         });
         if (this.fruit) this.fruit.removeInstance();
     }
 
-    hideOverlay(overlay) {
-        overlay.classList.remove("overlay");
-        overlay.classList.add("hidden");
+    showContainer(container) {
+        container.classList.remove("hidden");
+        container.classList.add("container");
+        container.classList.add("flex");
     }
 
+    hideContainer(container) {
+        container.classList.add("hidden");
+        container.classList.remove("container");
+        container.classList.remove("flex");
+    }
+
+
     resetGame() {
+        if (this.snakeHead !== null && this.snake.length > 0) {
+            clearInterval(this.intervalId);
+            this.removeSnakeFruit();
+        }
+
+
         this.snakeHead = null;
         this.snake = [];
         this.fruit = null;
@@ -287,8 +372,8 @@ class Game {
 
 class SnakeSegment {
     constructor(positionX, positionY) {
-        this.width = fieldSize;
-        this.height = fieldSize;
+        this.width = FIELDSIZE;
+        this.height = FIELDSIZE;
         this.positionX = positionX;
         this.positionY = positionY;
         this.position = [this.positionX, this.positionY];
@@ -298,49 +383,51 @@ class SnakeSegment {
     }
 
     createDomElement() {
-        this.domElement = document.createElement('div');
+        this.domElement = document.createElement("div");
         this.domElement.className = "snake";
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
-        this.domElement.style.left = this.positionX * fieldSize + "px";
-        this.domElement.style.bottom = this.positionY * fieldSize + "px";
+        this.domElement.style.left = this.positionX * FIELDSIZE + "px";
+        this.domElement.style.bottom = this.positionY * FIELDSIZE + "px";
 
         // append to the dom
         // const board = document.getElementById("board");
-        board.appendChild(this.domElement)
+        board.appendChild(this.domElement);
     }
 
     move(direction) {
         switch (direction) {
             case "up": {
-                if (this.positionY < columns - 1) {
+                if (this.positionY < COLUMNS - 1) {
                     this.positionY += 1;
                 } else {
                     this.positionY = 0;
                 }
                 break;
             }
-            case "right": {
-                if (this.positionX < columns - 1) {
-                    this.positionX += 1;
-                } else {
-                    this.positionX = 0;
+            case "right":
+                {
+                    if (this.positionX < COLUMNS - 1) {
+                        this.positionX += 1;
+                    } else {
+                        this.positionX = 0;
+                    }
                 }
-            }
                 break;
-            case "down": {
-                if (this.positionY > 0) {
-                    this.positionY -= 1;
-                } else {
-                    this.positionY = columns - 1;
+            case "down":
+                {
+                    if (this.positionY > 0) {
+                        this.positionY -= 1;
+                    } else {
+                        this.positionY = COLUMNS - 1;
+                    }
                 }
-            }
                 break;
             case "left": {
                 if (this.positionX > 0) {
                     this.positionX -= 1;
                 } else {
-                    this.positionX = columns - 1;
+                    this.positionX = COLUMNS - 1;
                 }
             }
         }
@@ -351,10 +438,10 @@ class SnakeSegment {
 
     updateDomCoordinates(direction) {
         if (direction == "left" || direction == "right") {
-            this.domElement.style.left = this.positionX * fieldSize + "px";
+            this.domElement.style.left = this.positionX * FIELDSIZE + "px";
         }
         if (direction == "up" || direction == "down") {
-            this.domElement.style.bottom = this.positionY * fieldSize + "px";
+            this.domElement.style.bottom = this.positionY * FIELDSIZE + "px";
         }
 
         this.position = [this.positionX, this.positionY];
@@ -368,17 +455,15 @@ class SnakeSegment {
         }
     }
 
-
     removeInstance() {
         board.removeChild(this.domElement);
     }
-
 }
 
 class Fruit {
     constructor(randomArr) {
-        this.width = fieldSize;
-        this.height = fieldSize;
+        this.width = FIELDSIZE;
+        this.height = FIELDSIZE;
 
         this.positionX = randomArr[0];
         this.positionY = randomArr[1];
@@ -389,9 +474,9 @@ class Fruit {
     }
 
     createDomElement() {
-        this.domElement = document.createElement('div');
-        const leaf1 = document.createElement('div');
-        const leaf2 = document.createElement('div');
+        this.domElement = document.createElement("div");
+        const leaf1 = document.createElement("div");
+        const leaf2 = document.createElement("div");
 
         this.domElement.className = "fruit";
         leaf1.className = "leaf-1";
@@ -399,8 +484,8 @@ class Fruit {
 
         this.domElement.style.width = this.width + "px";
         this.domElement.style.height = this.height + "px";
-        this.domElement.style.bottom = fieldSize * this.positionY + "px";
-        this.domElement.style.left = fieldSize * this.positionX + "px";
+        this.domElement.style.bottom = FIELDSIZE * this.positionY + "px";
+        this.domElement.style.left = FIELDSIZE * this.positionX + "px";
 
         // append to the dom
         this.domElement.appendChild(leaf1);
@@ -415,7 +500,7 @@ class Fruit {
 
 class Board {
     constructor(columns) {
-        this.squares = []; // all coordinates of the board in an array 
+        this.squares = []; // all coordinates of the board in an array
         this.setSquares(columns);
     }
 
@@ -433,9 +518,9 @@ class Board {
 }
 
 class Sound {
-    constructor(src) {
+    constructor(src, volume) {
         this.sound = new Audio(src);
-        this.sound.volume = 0.75;
+        this.sound.volume = volume;
         this.sound.load();
     }
 
@@ -445,6 +530,28 @@ class Sound {
     }
 }
 
+class Settings {
+    constructor(initialSoundVolume) {
+        this.volumeSlider = document.getElementById("volume-slider");
+        this.volumeSlider.value = initialSoundVolume;
+        this.volumeValue = document.getElementById("volume-value");
+        this.volume = this.volumeSlider.value / 100;
+        this.volumeSlider.addEventListener("input", this.updateVolume.bind(this));
+    }
+    updateVolume() {
+        this.volumeValue.textContent = `Volume-Value: ${this.volumeSlider.value}%`;
+        this.volume = this.volumeSlider.value / 100;
+    }
+}
+
+//game constants
+const COLUMNS = 24; //number of columns/ rows
+const FIELDSIZE = Math.floor(board.offsetWidth / COLUMNS);
+board.style.width = FIELDSIZE * COLUMNS + "px";
+board.style.height = FIELDSIZE * COLUMNS + "px";
+const initialSoundVolume = 5;
+
 //init
 const game = new Game();
-game.setupLevelButtonsEventListeners();
+const settings = new Settings(initialSoundVolume);
+game.setupHud(settings);
