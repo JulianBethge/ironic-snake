@@ -36,8 +36,8 @@ class Game {
         this.showContainer(this.welcomeContainer);
         this.hideContainer(this.settingsContainer);
 
-        const startBtn = document.querySelector(".start");
-        const settingsBtn = document.querySelector(".settings");
+        const startBtn = document.querySelector("#start-btn");
+        const settingsBtn = document.querySelector("#settings-btn");
 
         startBtn.addEventListener("click", () => this.startBtnClickHandler());
         settingsBtn.addEventListener("click", () => this.settingsBtnClickHandler());

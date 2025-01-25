@@ -16,10 +16,10 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
 - Good Luck!
 
 ### About the Author
-👨‍💻 [Julian Bethge](https://www.linkedin.com/in/julian-bethge/)  
-🎓 Bachelor of Science in Media Informatics
-💻 Full Stack Web Developer (Remote)
-📍 Homebase: Berlin
+- 👨‍💻 [Julian Bethge](https://www.linkedin.com/in/julian-bethge/)
+- 🎓 Bachelor of Science in Media Informatics
+- 💻 Full Stack Web Developer (Remote)
+- 📍 Homebase: Berlin
 
 ### Facts & Features
 - The player can wrap around the screen edges
@@ -31,6 +31,11 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
     - [Luca Di Alessandro](https://pixabay.com/users/lucadialessandro-25927643/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=159024) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=159024)
 
 #### Change Log
+**2025/01/25**:
+- Enhanced Menu Buttons:  
+    - Buttons now change color and size when hovered over.  
+    - Added visual feedback for button clicks with a distinct gradient and slight scaling effect.  
+
 **2024/04/10**: 
 - Improved settings menu for sound volume: 
     - Auditory feedback for the volume slider

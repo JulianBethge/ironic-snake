@@ -248,6 +248,16 @@ body {
 	z-index: 1;
 	cursor: pointer;
     border: 2px solid black;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .start {
@@ -265,7 +275,11 @@ body {
 		to right,
 		#ff6600,
 		#920000
-	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */ 
+}
+
+.start:hover {
+    background: linear-gradient(to right, #ffa500, #b22222);
 }
 
 .settings {
@@ -285,6 +299,10 @@ body {
 	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.settings:hover {
+    background: linear-gradient(to right, #ffa500, #fffb00);
+}
+
 .ok {
     text-shadow: 1px 1px 2px rgb(255, 255, 255);
 	font-weight: 800;
@@ -300,6 +318,10 @@ body {
 		#009419,
 		#1dd41d
 	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.ok:hover {
+    background: linear-gradient(to right, #1dd41d, #009419);
 }
 
 
@@ -347,11 +369,22 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: #4CAF50;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #4CAF50 60%, #2e7d32);
     cursor: pointer;
+    border: 2px solid black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5), inset 0 3px 6px rgba(255, 255, 255, 0.6);
 }
 
 #volume-value {
     font-size: 18px;
-    margin-top: 10px;
+    margin: 0 0 0 45px;
+    width: 240px;
+    text-align: left;
+    display: inline-block;
 }
