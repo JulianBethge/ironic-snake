@@ -356,6 +356,7 @@ body {
 #volume-slider {
     width: 200px;
     height: 10px;
+    appearance: none;
     -webkit-appearance: none;
     background-color: #ddd;
     border-radius: 5px;
