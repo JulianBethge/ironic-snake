@@ -38,9 +38,11 @@ class Game {
 
         const startBtn = document.querySelector("#start-btn");
         const settingsBtn = document.querySelector("#settings-btn");
+        const okBtn = document.querySelector(".ok");
 
         startBtn.addEventListener("click", () => this.startBtnClickHandler());
         settingsBtn.addEventListener("click", () => this.settingsBtnClickHandler());
+        okBtn.addEventListener("click", () => this.okBtnClickHandler());
         this.setupKeyboardEventListeners();
     }
 
@@ -57,8 +59,6 @@ class Game {
 
     showSettings() {
         this.showContainer(this.settingsContainer);
-        const okBtn = document.querySelector(".ok");
-        okBtn.addEventListener("click", () => this.okBtnClickHandler());
     }
 
     okBtnClickHandler() {
