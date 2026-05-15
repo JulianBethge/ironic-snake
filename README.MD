@@ -36,6 +36,12 @@ A 2D game for the browser. Snake is a video game genre where the player maneuver
 
 ## Change Log
 
+**2026/05/15**:
+
+- Fixed layout bug where score panel was not rendered as flex container
+- Fixed event listener stacking on OK button when pausing repeatedly
+- Fixed game loop order so fruit is consumed immediately on collision
+
 **2025/01/25**:
 
 - Enhanced Menu Buttons:  
