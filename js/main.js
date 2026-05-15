@@ -115,9 +115,9 @@ class Game {
         if (this.currentGameStatus !== this.gameStatus.RUNNING) {
             this.currentGameStatus = this.gameStatus.RUNNING
             this.intervalId = setInterval(() => {
-                this.handleFruitCollision();
                 this.handleMovementInput();
                 this.moveSnake();
+                this.handleFruitCollision();
                 this.evaluateGameStatus();
             }, interval);
         }
